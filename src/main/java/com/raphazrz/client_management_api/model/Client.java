@@ -8,7 +8,6 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "client")
@@ -24,4 +23,7 @@ public class Client {
     private String document;
 
     private List<Contact> contacts;
+
+    @Builder
+    public Client(String firstName, String lastName, String document, List<Contact> contacts) {}
 }
