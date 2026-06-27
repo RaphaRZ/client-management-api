@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Builder;
 
 @Getter
 @Setter
@@ -27,4 +28,7 @@ public class Contact {
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
+
+    @Builder
+    public Contact(ContactType contactType, String contact, Client client) {}
 }
