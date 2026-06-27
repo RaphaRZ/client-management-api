@@ -30,5 +30,9 @@ public class Contact {
     private Client client;
 
     @Builder
-    public Contact(ContactType contactType, String contact, Client client) {}
+    public Contact(ContactType contactType, String contact, Client client) {
+        this.contactType = contactType;
+        this.contact = contact;
+        this.client = client;
+    }
 }

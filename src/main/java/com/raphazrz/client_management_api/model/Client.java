@@ -35,5 +35,10 @@ public class Client {
     private List<Contact> contacts;
 
     @Builder
-    public Client(String firstName, String lastName, String document, List<Contact> contacts) {}
+    public Client(String firstName, String lastName, String document, List<Contact> contacts) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.document = document;
+        this.contacts = contacts;
+    }
 }
