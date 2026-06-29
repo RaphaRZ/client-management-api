@@ -2,6 +2,16 @@ package com.raphazrz.client_management_api.dto.request;
 
 import com.raphazrz.client_management_api.enumerator.ContactType;
 import com.raphazrz.client_management_api.model.Client;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-public record ContactDTO(ContactType contactType, String contact, Client client) {
+public record ContactDTO(
+        @NotNull(message = "Contact type is required.")
+        ContactType contactType,
+
+        @NotBlank(message = "Contact is required.")
+        String contact,
+
+        @NotNull(message = "Client id is required.")
+        Long clientId) {
 }
