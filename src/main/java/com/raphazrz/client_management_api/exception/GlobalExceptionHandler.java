@@ -27,6 +27,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDTO);
     }
 
+    @ExceptionHandler(DuplicateDocumentException.class)
+    public ResponseEntity<ExceptionDTO> handleDuplicateDocumentException(DuplicateDocumentException e) {
+        ExceptionDTO exceptionDTO = new ExceptionDTO(e.getMessage(), e.getStatusCode());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptionDTO);
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ExceptionDTO> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         ExceptionDTO exceptionDTO = new ExceptionDTO("Request body could not be read.", HttpStatus.BAD_REQUEST.value());
