@@ -19,19 +19,19 @@ public class ContactService {
     private final ContactRepository contactRepository;
 
     public ContactResponseDTO createContact(ContactRequestDTO contactRequestDTO) {
+        Client client = findClientById(contactRequestDTO.clientId());
+
         Contact newContact = ContactMapper.toEntity(contactRequestDTO);
-        addClientToContact(newContact);
+        newContact.setClient(client);
 
         Contact savedContact = saveContact(newContact);
 
         return ContactMapper.toResponseDTO(savedContact);
     }
 
-    private void addClientToContact(Contact contact) {
-        Client client = clientRepository.findById(contact.getId())
+    private Client findClientById(Long clientId) {
+        return clientRepository.findById(clientId)
                 .orElseThrow(() -> new ClientNotFoundException("Client not found."));
-
-        contact.setClient(client);
     }
 
     private Contact saveContact(Contact contact){
