@@ -1,5 +1,7 @@
 package com.raphazrz.client_management_api.enumerator;
 
+import com.raphazrz.client_management_api.exception.InvalidContactTypeException;
+
 public enum ContactType {
     PHONE(1),
     EMAIL(2);
