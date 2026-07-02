@@ -4,6 +4,7 @@ import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
 import com.raphazrz.client_management_api.dto.response.ContactResponseDTO;
 import com.raphazrz.client_management_api.exception.ClientNotFoundException;
+import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.repository.ClientRepository;
 import com.raphazrz.client_management_api.repository.ContactRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,5 @@ public class ContactService {
 
     }
 
-    private void validateClientExistence(Long clientId) {
-        if (!clientRepository.existsById(clientId))
-            throw new ClientNotFoundException("Client not found.");
-    }
+
 }
