@@ -20,10 +20,11 @@ public class ContactService {
 
     public ContactResponseDTO createContact(ContactRequestDTO contactRequestDTO) {
         Contact newContact = ContactMapper.toEntity(contactRequestDTO);
-
         addClientToContact(newContact);
 
+        Contact savedContact = saveContact(newContact);
 
+        return ContactMapper.toResponseDTO(savedContact);
     }
 
     private void addClientToContact(Contact contact) {
@@ -31,5 +32,9 @@ public class ContactService {
                 .orElseThrow(() -> new ClientNotFoundException("Client not found."));
 
         contact.setClient(client);
+    }
+
+    private Contact saveContact(Contact contact){
+        return contactRepository.save(contact);
     }
 }

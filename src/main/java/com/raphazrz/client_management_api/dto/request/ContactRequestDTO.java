@@ -1,11 +1,10 @@
 package com.raphazrz.client_management_api.dto.request;
 
 import com.raphazrz.client_management_api.enumerator.ContactType;
-import com.raphazrz.client_management_api.model.Client;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record ContactDTO(
+public record ContactRequestDTO(
         @NotNull(message = "Contact type is required.")
         ContactType contactType,
 
