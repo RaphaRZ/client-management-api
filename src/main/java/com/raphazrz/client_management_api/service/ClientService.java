@@ -15,10 +15,6 @@ import org.springframework.stereotype.Service;
 public class ClientService {
     private final ClientRepository clientRepository;
 
-    private Client saveClient(Client client) {
-        return clientRepository.save(client);
-    }
-
     public ClientResponseDTO createClient(ClientRequestDTO clientRequestDTO) {
         validateUniqueDocument(clientRequestDTO.document());
 
@@ -31,5 +27,9 @@ public class ClientService {
     public void validateUniqueDocument(String document) {
         if (clientRepository.existsByDocument(document))
             throw new DuplicateDocumentException("Document already registered.");
+    }
+
+    private Client saveClient(Client client) {
+        return clientRepository.save(client);
     }
 }
