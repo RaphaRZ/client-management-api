@@ -35,4 +35,8 @@ public class Contact {
         this.contact = contact;
         this.client = client;
     }
+
+    public Long getClientId() {
+        return client.getId();
+    }
 }
