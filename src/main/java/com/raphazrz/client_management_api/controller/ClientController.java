@@ -2,7 +2,6 @@ package com.raphazrz.client_management_api.controller;
 
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
-import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.service.ClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
