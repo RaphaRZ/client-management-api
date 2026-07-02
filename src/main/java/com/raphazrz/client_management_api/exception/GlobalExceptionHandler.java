@@ -27,6 +27,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDTO);
     }
 
+    @ExceptionHandler(ClientNotFoundException.class)
+    public ResponseEntity<ExceptionDTO> handleClientNotFoundException(ClientNotFoundException e) {
+        ExceptionDTO exceptionDTO = new ExceptionDTO(e.getMessage(), e.getStatusCode());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionDTO);
+    }
+
     @ExceptionHandler(DuplicateDocumentException.class)
     public ResponseEntity<ExceptionDTO> handleDuplicateDocumentException(DuplicateDocumentException e) {
         ExceptionDTO exceptionDTO = new ExceptionDTO(e.getMessage(), e.getStatusCode());
