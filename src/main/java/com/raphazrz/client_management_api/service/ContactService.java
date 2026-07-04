@@ -51,7 +51,7 @@ public class ContactService {
 
     private Client findClientById(Long clientId) {
         return clientRepository.findById(clientId)
-                .orElseThrow(() -> new ClientNotFoundException("Client not found."));
+                .orElseThrow(() -> new ClientNotFoundException());
     }
 
     private Contact saveContact(Contact contact){

@@ -34,7 +34,7 @@ public class ClientService {
 
     private Client findClientById(Long id) {
         return clientRepository.findById(id)
-                .orElseThrow(() -> new ClientNotFoundException("Client not found."));
+                .orElseThrow(ClientNotFoundException::new);
     }
 
     public void validateUniqueDocument(String document) {
