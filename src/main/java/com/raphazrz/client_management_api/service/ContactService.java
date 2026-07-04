@@ -32,12 +32,21 @@ public class ContactService {
         return ContactMapper.toResponseDTO(savedContact);
     }
 
+    @Transactional(readOnly = true)
+    public ContactResponseDTO getContactById(Long id) {
+        return ContactMapper.toResponseDTO(findContactById(id));
+    }
+
     @Transactional
     public void deleteContact(Long contactId) {
-        Contact contact = contactRepository.findById(contactId)
-                .orElseThrow(() -> new ContactNotFoundException("Contact not found."));
+        Contact contact = findContactById(contactId);
 
         contactRepository.delete(contact);
+    }
+
+    private Contact findContactById(Long contactId) {
+        return contactRepository.findById(contactId)
+                .orElseThrow(() -> new ContactNotFoundException("Contact not found."));
     }
 
     private Client findClientById(Long clientId) {
