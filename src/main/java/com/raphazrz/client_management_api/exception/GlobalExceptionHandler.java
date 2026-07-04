@@ -39,6 +39,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionDTO);
     }
 
+    @ExceptionHandler(ContactNotFoundException.class)
+    public ResponseEntity<ExceptionDTO> handleContactNotFoundException(ContactNotFoundException e) {
+        ExceptionDTO exceptionDTO = new ExceptionDTO(e.getMessage(), e.getStatusCode());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionDTO);
+    }
+
     @ExceptionHandler(DuplicateDocumentException.class)
     public ResponseEntity<ExceptionDTO> handleDuplicateDocumentException(DuplicateDocumentException e) {
         ExceptionDTO exceptionDTO = new ExceptionDTO(e.getMessage(), e.getStatusCode());
