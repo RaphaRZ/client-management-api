@@ -7,10 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -24,5 +21,12 @@ public class ClientController {
         ClientResponseDTO newClient = clientService.createClient(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(newClient);
+    }
+
+    @GetMapping("/id/{id}")
+    public ResponseEntity<ClientResponseDTO> getClientById(@PathVariable Long id) {
+        ClientResponseDTO client = clientService.getClientById(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(client);
     }
 }
