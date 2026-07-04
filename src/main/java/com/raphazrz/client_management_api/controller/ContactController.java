@@ -23,7 +23,14 @@ public class ContactController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newContact);
     }
 
-    @DeleteMapping("/{id}")
+    @GetMapping("/id/{id}")
+    public ResponseEntity<ContactResponseDTO> getContactById(@PathVariable Long id) {
+        ContactResponseDTO contact = contactService.getContactById(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(contact);
+    }
+
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> deleteContact(@PathVariable Long id) {
         contactService.deleteContact(id);
 
