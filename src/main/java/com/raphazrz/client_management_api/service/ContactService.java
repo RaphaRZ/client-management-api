@@ -46,12 +46,12 @@ public class ContactService {
 
     private Contact findContactById(Long contactId) {
         return contactRepository.findById(contactId)
-                .orElseThrow(() -> new ContactNotFoundException("Contact not found."));
+                .orElseThrow(ContactNotFoundException::new);
     }
 
     private Client findClientById(Long clientId) {
         return clientRepository.findById(clientId)
-                .orElseThrow(() -> new ClientNotFoundException());
+                .orElseThrow(ClientNotFoundException::new);
     }
 
     private Contact saveContact(Contact contact){
