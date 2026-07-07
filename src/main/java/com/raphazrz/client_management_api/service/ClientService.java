@@ -32,7 +32,7 @@ public class ClientService {
         return ClientMapper.toResponseDTO(findClientById(id));
     }
 
-    private Client findClientById(Long id) {
+    public Client findClientById(Long id) {
         return clientRepository.findById(id)
                 .orElseThrow(ClientNotFoundException::new);
     }
