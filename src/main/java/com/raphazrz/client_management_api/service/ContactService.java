@@ -17,12 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 public class ContactService {
+    private final ClientService clientService;
     private final ClientRepository clientRepository;
     private final ContactRepository contactRepository;
 
     @Transactional
     public ContactResponseDTO createContact(ContactRequestDTO contactRequestDTO) {
-        Client client = findClientById(contactRequestDTO.clientId());
+        Client client = clientService.findClientById(contactRequestDTO.clientId());
 
         Contact newContact = ContactMapper.toEntity(contactRequestDTO);
         newContact.setClient(client);
@@ -47,11 +48,6 @@ public class ContactService {
     private Contact findContactById(Long contactId) {
         return contactRepository.findById(contactId)
                 .orElseThrow(ContactNotFoundException::new);
-    }
-
-    private Client findClientById(Long clientId) {
-        return clientRepository.findById(clientId)
-                .orElseThrow(ClientNotFoundException::new);
     }
 
     private Contact saveContact(Contact contact){
