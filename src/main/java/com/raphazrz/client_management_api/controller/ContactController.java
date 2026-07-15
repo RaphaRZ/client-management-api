@@ -30,6 +30,15 @@ public class ContactController {
         return ResponseEntity.status(HttpStatus.OK).body(contact);
     }
 
+    @PutMapping("/id/{id}")
+    public ResponseEntity<ContactResponseDTO> updateContact(
+            @PathVariable Long id,
+            @Valid @RequestBody ContactRequestDTO request) {
+        ContactResponseDTO contact = contactService.updateContactById(id, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(contact);
+    }
+
     @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> deleteContact(@PathVariable Long id) {
         contactService.deleteContact(id);

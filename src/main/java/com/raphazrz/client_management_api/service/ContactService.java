@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ContactService {
     private final ClientService clientService;
-    private final ClientRepository clientRepository;
     private final ContactRepository contactRepository;
 
     @Transactional
@@ -45,7 +44,7 @@ public class ContactService {
         contactRepository.delete(contact);
     }
 
-    private Contact findContactById(Long contactId) {
+    public Contact findContactById(Long contactId) {
         return contactRepository.findById(contactId)
                 .orElseThrow(ContactNotFoundException::new);
     }
