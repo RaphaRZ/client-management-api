@@ -4,6 +4,7 @@ import com.raphazrz.client_management_api.dto.other.ClientContactDTO;
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
 import com.raphazrz.client_management_api.model.Client;
+import com.raphazrz.client_management_api.model.Contact;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,17 +13,17 @@ import java.util.List;
 
 public class ClientMapper {
     public static ClientResponseDTO toResponseDTO(Client client) {
-        List<ClientContactDTO> contacts = client.getContacts().stream()
-                .map(contact -> new ClientContactDTO(
-                        contact.getContactType(),
-                        contact.getContact()))
-                .toList();
+        List<ClientContactDTO> contacts = toClientContactDTO(client.getContacts());
 
         return new ClientResponseDTO(
                 client.getFirstName(),
                 client.getLastName(),
                 client.getDocument(),
                 contacts);
+    }
+
+    public static List<Client> toResponseDTO(List<Client> clients) {
+
     }
 
     public static Client toEntity(ClientRequestDTO clientRequestDTO) {
@@ -32,5 +33,13 @@ public class ClientMapper {
                 clientRequestDTO.document(),
                 clientRequestDTO.contacts()
         );
+    }
+
+    private static List<ClientContactDTO> toClientContactDTO(List<Contact> contacts) {
+        return contacts.stream()
+                .map(contact -> new ClientContactDTO(
+                        contact.getContactType(),
+                        contact.getContact()))
+                .toList();
     }
 }
