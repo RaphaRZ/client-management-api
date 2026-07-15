@@ -1,6 +1,7 @@
 package com.raphazrz.client_management_api.controller;
 
 import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
+import com.raphazrz.client_management_api.dto.request.UpdateContactRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ContactResponseDTO;
 import com.raphazrz.client_management_api.service.ContactService;
 import jakarta.validation.Valid;
@@ -33,7 +34,7 @@ public class ContactController {
     @PutMapping("/id/{id}")
     public ResponseEntity<ContactResponseDTO> updateContact(
             @PathVariable Long id,
-            @Valid @RequestBody ContactRequestDTO request) {
+            @Valid @RequestBody UpdateContactRequestDTO request) {
         ContactResponseDTO contact = contactService.updateContactById(id, request);
 
         return ResponseEntity.status(HttpStatus.OK).body(contact);
