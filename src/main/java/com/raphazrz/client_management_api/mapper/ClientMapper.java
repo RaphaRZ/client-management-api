@@ -13,7 +13,10 @@ import java.util.List;
 
 public class ClientMapper {
     public static ClientResponseDTO toResponseDTO(Client client) {
-        List<ClientContactDTO> contacts = toClientContactDTO(client.getContacts());
+        List<ClientContactDTO> contacts = null;
+
+        if (client.getContacts() != null)
+            contacts = toClientContactDTO(client.getContacts());
 
         return new ClientResponseDTO(
                 client.getFirstName(),
