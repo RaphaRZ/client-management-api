@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +23,13 @@ public class ClientController {
         ClientResponseDTO newClient = clientService.createClient(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(newClient);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ClientResponseDTO>> getClients() {
+        List<ClientResponseDTO> clients = clientService.getClients();
+
+        return ResponseEntity.status(HttpStatus.OK).body(clients);
     }
 
     @GetMapping("/id/{id}")
