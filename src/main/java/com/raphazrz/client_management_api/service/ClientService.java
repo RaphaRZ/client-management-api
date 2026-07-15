@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @RequiredArgsConstructor
 @Service
@@ -28,8 +30,17 @@ public class ClientService {
     }
 
     @Transactional(readOnly = true)
+    public List<ClientResponseDTO> getClients() {
+        return ClientMapper.toResponseDTO(findAllClients());
+    }
+
+    @Transactional(readOnly = true)
     public ClientResponseDTO getClientById(Long id) {
         return ClientMapper.toResponseDTO(findClientById(id));
+    }
+
+    public List<Client> findAllClients() {
+        return clientRepository.findAll();
     }
 
     public Client findClientById(Long id) {
