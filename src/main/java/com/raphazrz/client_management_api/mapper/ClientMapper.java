@@ -22,8 +22,10 @@ public class ClientMapper {
                 contacts);
     }
 
-    public static List<Client> toResponseDTO(List<Client> clients) {
-
+    public static List<ClientResponseDTO> toResponseDTO(List<Client> clients) {
+        return clients.stream()
+                .map(ClientMapper::toResponseDTO)
+                .toList();
     }
 
     public static Client toEntity(ClientRequestDTO clientRequestDTO) {
