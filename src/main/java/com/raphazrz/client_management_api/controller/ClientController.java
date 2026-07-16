@@ -1,5 +1,6 @@
 package com.raphazrz.client_management_api.controller;
 
+import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
 import com.raphazrz.client_management_api.service.ClientService;
@@ -37,5 +38,12 @@ public class ClientController {
         ClientResponseDTO client = clientService.getClientById(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(client);
+    }
+
+    @GetMapping("/id/{id}/contacts")
+    public ResponseEntity<List<ClientContactResponseDTO>> getAllContactsByClientId(@PathVariable Long id) {
+        List<ClientContactResponseDTO> contacts = clientService.getAllContactsByClientId(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(contacts);
     }
 }
