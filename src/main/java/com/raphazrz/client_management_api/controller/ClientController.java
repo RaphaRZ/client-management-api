@@ -1,5 +1,6 @@
 package com.raphazrz.client_management_api.controller;
 
+import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
@@ -45,5 +46,14 @@ public class ClientController {
         List<ClientContactResponseDTO> contacts = clientService.getAllContactsByClientId(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(contacts);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ClientResponseDTO> updateClientById(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateClientRequestDTO request) {
+        ClientResponseDTO updatedClient = clientService.updateClientById(id, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(updatedClient);
     }
 }
