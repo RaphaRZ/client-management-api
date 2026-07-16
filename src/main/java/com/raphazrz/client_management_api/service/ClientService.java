@@ -1,8 +1,8 @@
 package com.raphazrz.client_management_api.service;
 
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
+import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
-import com.raphazrz.client_management_api.exception.ClientNotFoundException;
 import com.raphazrz.client_management_api.exception.DuplicateDocumentException;
 import com.raphazrz.client_management_api.mapper.ClientMapper;
 import com.raphazrz.client_management_api.model.Client;
@@ -16,8 +16,10 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class ClientService {
+public class ClientService { // CRIAR ClientQueryService
+    private final ContactService contactService;
     private final ClientRepository clientRepository;
+    private final ClientQueryService clientQueryService;
 
     @Transactional
     public ClientResponseDTO createClient(ClientRequestDTO clientRequestDTO) {
@@ -31,21 +33,17 @@ public class ClientService {
 
     @Transactional(readOnly = true)
     public List<ClientResponseDTO> getClients() {
-        return ClientMapper.toResponseDTO(findAllClients());
+        return ClientMapper.toResponseDTO(clientQueryService.findAllClients());
     }
 
     @Transactional(readOnly = true)
     public ClientResponseDTO getClientById(Long id) {
-        return ClientMapper.toResponseDTO(findClientById(id));
+        return ClientMapper.toResponseDTO(clientQueryService.findClientById(id));
     }
 
-    public List<Client> findAllClients() {
-        return clientRepository.findAll();
-    }
-
-    public Client findClientById(Long id) {
-        return clientRepository.findById(id)
-                .orElseThrow(ClientNotFoundException::new);
+    @Transactional(readOnly = true)
+    public List<ClientContactResponseDTO> getAllContactsByClientId(Long id) {
+        return contactService.findAllContactsByClientId(id);
     }
 
     public void validateUniqueDocument(String document) {

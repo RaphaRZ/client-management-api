@@ -2,6 +2,7 @@ package com.raphazrz.client_management_api.service;
 
 import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
 import com.raphazrz.client_management_api.dto.request.UpdateContactRequestDTO;
+import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.response.ContactResponseDTO;
 import com.raphazrz.client_management_api.enumerator.ContactType;
 import com.raphazrz.client_management_api.exception.ContactNotFoundException;
@@ -13,16 +14,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @RequiredArgsConstructor
 @Service
 public class ContactService {
-    private final ClientService clientService;
+    private final ClientQueryService clientQueryService;
     private final ContactRepository contactRepository;
 
     @Transactional
     public ContactResponseDTO createContact(ContactRequestDTO request) {
-        Client client = clientService.findClientById(request.clientId());
+        Client client = clientQueryService.findClientById(request.clientId());
 
         Contact newContact = ContactMapper.toEntity(request);
         newContact.setClient(client);
@@ -57,6 +60,15 @@ public class ContactService {
     public Contact findContactById(Long contactId) {
         return contactRepository.findById(contactId)
                 .orElseThrow(ContactNotFoundException::new);
+    }
+
+    public List<ClientContactResponseDTO> findAllContactsByClientId(Long id) {
+        Client client = clientQueryService.findClientById(id);
+        List<Contact> contacts = client.getContacts();
+
+        return contacts.stream()
+                .map(ContactMapper::toClientContactResponseDTO)
+                .toList();
     }
 
     private Contact saveContact(Contact contact) {
