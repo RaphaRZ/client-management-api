@@ -7,9 +7,13 @@ REST API for managing clients and their contacts. Each client can have one or mo
 The application must provide:
 
 * Create a client: `POST /clients`
-* Create a contact associated with an existing client: `POST /contacts`
 * List all clients with their contacts: `GET /clients`
+* Get a client by ID: `GET /clients/{id}`
 * List contacts for a specific client: `GET /clients/{id}/contacts`
+* Update a client's first name, last name, and document: `PUT /clients/{id}`
+* Delete a client: `DELETE /clients/{id}`
+* Create a contact associated with an existing client: `POST /contacts`
+* Delete a contact: `DELETE /contacts/{id}`
 * Spring Boot + Spring Data JPA
 * PostgreSQL database
 
