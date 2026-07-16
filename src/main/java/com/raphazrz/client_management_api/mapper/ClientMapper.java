@@ -1,19 +1,17 @@
 package com.raphazrz.client_management_api.mapper;
 
-import com.raphazrz.client_management_api.dto.other.ClientContactDTO;
+import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
 import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.model.Contact;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
 public class ClientMapper {
     public static ClientResponseDTO toResponseDTO(Client client) {
-        List<ClientContactDTO> contacts = null;
+        List<ClientContactResponseDTO> contacts = null;
 
         if (client.getContacts() != null)
             contacts = toClientContactDTO(client.getContacts());
@@ -40,9 +38,9 @@ public class ClientMapper {
         );
     }
 
-    private static List<ClientContactDTO> toClientContactDTO(List<Contact> contacts) {
+    private static List<ClientContactResponseDTO> toClientContactDTO(List<Contact> contacts) {
         return contacts.stream()
-                .map(contact -> new ClientContactDTO(
+                .map(contact -> new ClientContactResponseDTO(
                         contact.getContactType(),
                         contact.getContact()))
                 .toList();

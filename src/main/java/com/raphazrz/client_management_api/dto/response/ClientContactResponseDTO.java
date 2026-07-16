@@ -1,9 +1,9 @@
-package com.raphazrz.client_management_api.dto.other;
+package com.raphazrz.client_management_api.dto.response;
 
 import com.raphazrz.client_management_api.enumerator.ContactType;
 
 
-public record ClientContactDTO(
+public record ClientContactResponseDTO(
         ContactType contactType,
         String contact) {
 }
