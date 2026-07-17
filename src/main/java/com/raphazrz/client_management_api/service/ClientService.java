@@ -52,7 +52,7 @@ public class ClientService { // CRIAR ClientQueryService
     public ClientResponseDTO updateClientById(Long id, UpdateClientRequestDTO request) {
         Client updatedContact = clientQueryService.findClientById(id);
 
-        validateUniqueDocument(request.document());
+        validateUniqueDocument(request.document(), id);
 
         updatedContact.setFirstName(request.firstName());
         updatedContact.setLastName(request.lastName());
@@ -63,6 +63,11 @@ public class ClientService { // CRIAR ClientQueryService
 
     public void validateUniqueDocument(String document) {
         if (clientRepository.existsByDocument(document))
+            throw new DuplicateDocumentException("Document already registered.");
+    }
+
+    public void validateUniqueDocument(String document, Long id) {
+        if (clientRepository.existsByDocumentAndIdNot(document, id))
             throw new DuplicateDocumentException("Document already registered.");
     }
 
