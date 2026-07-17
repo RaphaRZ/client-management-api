@@ -52,6 +52,8 @@ public class ClientService { // CRIAR ClientQueryService
     public ClientResponseDTO updateClientById(Long id, UpdateClientRequestDTO request) {
         Client updatedContact = clientQueryService.findClientById(id);
 
+        validateUniqueDocument(request.document());
+
         updatedContact.setFirstName(request.firstName());
         updatedContact.setLastName(request.lastName());
         updatedContact.setDocument(request.document());
