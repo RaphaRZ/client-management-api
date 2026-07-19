@@ -61,6 +61,12 @@ public class ClientService { // CRIAR ClientQueryService
         return ClientMapper.toResponseDTO(updatedContact);
     }
 
+    @Transactional
+    public void deleteClientById(Long id) {
+        Client client = clientQueryService.findClientById(id);
+        deleteClient(client);
+    }
+
     public void validateUniqueDocument(String document) {
         if (clientRepository.existsByDocument(document))
             throw new DuplicateDocumentException("Document already registered.");
@@ -73,5 +79,9 @@ public class ClientService { // CRIAR ClientQueryService
 
     private Client saveClient(Client client) {
         return clientRepository.save(client);
+    }
+
+    private void deleteClient(Client client) {
+        clientRepository.delete(client);
     }
 }
