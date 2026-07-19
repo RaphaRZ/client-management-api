@@ -56,4 +56,11 @@ public class ClientController {
 
         return ResponseEntity.status(HttpStatus.OK).body(updatedClient);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteClientById(@PathVariable Long id) {
+        clientService.deleteClientById(id);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
