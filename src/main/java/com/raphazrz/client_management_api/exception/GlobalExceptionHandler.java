@@ -4,6 +4,7 @@ import com.raphazrz.client_management_api.dto.other.ExceptionDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,7 +12,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.util.HashMap;
 import java.util.Map;
-// TRATAR HttpRequestMethodNotSupportedException
+
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -56,6 +57,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionDTO> handleContactNotFoundException(ContactNotFoundException e) {
         ExceptionDTO exceptionDTO = new ExceptionDTO(e.getMessage(), e.getStatusCode());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionDTO);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ExceptionDTO> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+        ExceptionDTO exceptionDTO = new ExceptionDTO("Requested HTTP method is not supported for this endpoint.", 405);
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(exceptionDTO);
     }
 
     @ExceptionHandler(DuplicateDocumentException.class)
