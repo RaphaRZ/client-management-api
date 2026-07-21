@@ -7,10 +7,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.HashMap;
 import java.util.Map;
-
+// TRATAR HttpRequestMethodNotSupportedException
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -24,6 +25,18 @@ public class GlobalExceptionHandler {
 
         ExceptionDTO exceptionDTO = new ExceptionDTO(errors, e.getStatusCode().value());
 
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDTO);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ExceptionDTO> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        ExceptionDTO exceptionDTO = new ExceptionDTO("Request body could not be read.", 400);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDTO);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ExceptionDTO> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        ExceptionDTO exceptionDTO = new ExceptionDTO("Invalid value for parameter '" + e.getName() + "'.", 400);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDTO);
     }
 
@@ -51,10 +64,5 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptionDTO);
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ExceptionDTO> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        ExceptionDTO exceptionDTO = new ExceptionDTO("Request body could not be read.", HttpStatus.BAD_REQUEST.value());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionDTO);
 
-    }
 }
