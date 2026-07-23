@@ -34,14 +34,14 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.OK).body(clients);
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<ClientResponseDTO> getClientById(@PathVariable Long id) {
         ClientResponseDTO client = clientService.getClientById(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(client);
     }
 
-    @GetMapping("/id/{id}/contacts")
+    @GetMapping("{id}/contacts")
     public ResponseEntity<List<ClientContactResponseDTO>> getAllContactsByClientId(@PathVariable Long id) {
         List<ClientContactResponseDTO> contacts = clientService.getAllContactsByClientId(id);
 
