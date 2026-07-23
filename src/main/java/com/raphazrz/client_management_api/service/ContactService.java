@@ -35,11 +35,6 @@ public class ContactService {
         return ContactMapper.toResponseDTO(savedContact);
     }
 
-    @Transactional(readOnly = true)
-    public ContactResponseDTO getContactById(Long id) {
-        return ContactMapper.toResponseDTO(findContactById(id));
-    }
-
     @Transactional
     public ContactResponseDTO updateContactById(Long id, UpdateContactRequestDTO request) {
         Contact updatedContact = findContactById(id);

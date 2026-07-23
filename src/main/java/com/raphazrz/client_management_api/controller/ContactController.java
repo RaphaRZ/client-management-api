@@ -24,13 +24,6 @@ public class ContactController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newContact);
     }
 
-    @GetMapping("/id/{id}")
-    public ResponseEntity<ContactResponseDTO> getContactById(@PathVariable Long id) {
-        ContactResponseDTO contact = contactService.getContactById(id);
-
-        return ResponseEntity.status(HttpStatus.OK).body(contact);
-    }
-
     @PutMapping("/id/{id}")
     public ResponseEntity<ContactResponseDTO> updateContact(
             @PathVariable Long id,
