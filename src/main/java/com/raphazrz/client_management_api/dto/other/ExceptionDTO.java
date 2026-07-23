@@ -1,7 +1,9 @@
 package com.raphazrz.client_management_api.dto.other;
 
 
+import java.util.HashMap;
 import java.util.Map;
+
 
 public record ExceptionDTO(
         String message,
@@ -9,7 +11,7 @@ public record ExceptionDTO(
         int statusCode) {
 
     public ExceptionDTO(String message, int statusCode) {
-        this(message, null, statusCode);
+        this(message, new HashMap<>(), statusCode);
     }
 
     public ExceptionDTO(Map<String, String> validationErrors, int statusCode) {
