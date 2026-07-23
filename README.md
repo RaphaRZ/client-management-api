@@ -13,6 +13,7 @@ The application must provide:
 * Update a client's first name, last name, and document: `PUT /clients/{id}`
 * Delete a client: `DELETE /clients/{id}`
 * Create a contact associated with an existing client: `POST /contacts`
+* Update a contact's type and value: `PUT /contacts/{id}`
 * Delete a contact: `DELETE /contacts/{id}`
 * Spring Boot + Spring Data JPA
 * PostgreSQL database
