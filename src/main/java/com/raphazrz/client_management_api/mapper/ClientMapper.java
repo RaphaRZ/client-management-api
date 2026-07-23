@@ -6,6 +6,7 @@ import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
 import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.model.Contact;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,7 +35,7 @@ public class ClientMapper {
                 clientRequestDTO.firstName(),
                 clientRequestDTO.lastName(),
                 clientRequestDTO.document(),
-                clientRequestDTO.contacts()
+                new ArrayList<>()
         );
     }
 
