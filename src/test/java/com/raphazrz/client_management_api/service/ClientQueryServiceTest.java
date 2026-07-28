@@ -61,5 +61,19 @@ public class ClientQueryServiceTest {
         verify(clientRepository).findById(1L);
     }
 
+    @Test
+    @DisplayName("Should throw ClientNotFoundException.")
+    void findClientByIdClientNotFoundException() {
+        // Arrange
+        when(clientRepository.findById(1L)).thenReturn(Optional.empty());
 
+        // Act
+        ClientNotFoundException thrown = assertThrows(
+                ClientNotFoundException.class,
+                () -> clientQueryService.findClientById(1L));
+
+        // Assert
+        Assertions.assertEquals("Client not found.", thrown.getMessage());
+        verify(clientRepository).findById(1L);
+    }
 }
