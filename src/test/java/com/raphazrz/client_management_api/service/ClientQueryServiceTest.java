@@ -1,6 +1,5 @@
 package com.raphazrz.client_management_api.service;
 
-
 import com.raphazrz.client_management_api.exception.ClientNotFoundException;
 import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.repository.ClientRepository;
@@ -31,6 +30,7 @@ public class ClientQueryServiceTest {
     @InjectMocks
     private ClientQueryService clientQueryService;
 
+
     @Test
     @DisplayName("Should return all clients successfully.")
     void findAllClientsSuccess() {
@@ -50,7 +50,7 @@ public class ClientQueryServiceTest {
     @DisplayName("Should return the client successfully.")
     void findClientByIdSuccess() {
         // Arrange
-        Client client = new Client("First", "Client", "01234567890", new ArrayList<>());
+        Client client = new Client("First", "Client", "00123456789", new ArrayList<>());
         when(clientRepository.findById(any())).thenReturn(Optional.of(client));
 
         // Act
