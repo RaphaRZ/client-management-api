@@ -67,12 +67,12 @@ public class ClientService { // CRIAR ClientQueryService
         deleteClient(client);
     }
 
-    public void validateUniqueDocument(String document) {
+    private void validateUniqueDocument(String document) {
         if (clientRepository.existsByDocument(document))
             throw new DuplicateDocumentException("Document already registered.");
     }
 
-    public void validateUniqueDocument(String document, Long id) {
+    private void validateUniqueDocument(String document, Long id) {
         if (clientRepository.existsByDocumentAndIdNot(document, id))
             throw new DuplicateDocumentException("Document already registered.");
     }
