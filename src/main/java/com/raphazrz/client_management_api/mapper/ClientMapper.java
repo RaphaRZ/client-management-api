@@ -12,10 +12,9 @@ import java.util.List;
 
 public class ClientMapper {
     public static ClientResponseDTO toResponseDTO(Client client) {
-        List<ClientContactResponseDTO> contacts = null;
-
-        if (client.getContacts() != null)
-            contacts = toClientContactDTO(client.getContacts());
+        List<ClientContactResponseDTO> contacts = client.getContacts() == null
+                ? new ArrayList<>()
+                : toClientContactDTO(client.getContacts());;
 
         return new ClientResponseDTO(
                 client.getFirstName(),
