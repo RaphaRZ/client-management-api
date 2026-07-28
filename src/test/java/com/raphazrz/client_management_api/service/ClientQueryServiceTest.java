@@ -73,7 +73,7 @@ public class ClientQueryServiceTest {
                 () -> clientQueryService.findClientById(1L));
 
         // Assert
-        Assertions.assertEquals("Client not found.", thrown.getMessage());
+        assertEquals("Client not found.", thrown.getMessage());
         verify(clientRepository).findById(1L);
     }
 }
