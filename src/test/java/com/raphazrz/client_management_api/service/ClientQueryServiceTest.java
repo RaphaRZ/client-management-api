@@ -46,5 +46,20 @@ public class ClientQueryServiceTest {
         verify(clientRepository).findAll();
     }
 
+    @Test
+    @DisplayName("Should return the client successfully.")
+    void findClientByIdSuccess() {
+        // Arrange
+        Client client = new Client("First", "Client", "01234567890", new ArrayList<>());
+        when(clientRepository.findById(any())).thenReturn(Optional.of(client));
+
+        // Act
+        Client result = clientQueryService.findClientById(1L);
+
+        // Assert
+        assertEquals(client, result);
+        verify(clientRepository).findById(1L);
+    }
+
 
 }
