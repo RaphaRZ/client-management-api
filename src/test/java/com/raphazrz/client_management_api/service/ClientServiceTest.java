@@ -42,7 +42,7 @@ public class ClientServiceTest {
     @DisplayName("Should return a new client as ClientResponseDTO.")
     void createClientSuccess() {
         // Arrange
-        ClientRequestDTO request = new ClientRequestDTO("First", "Client", "00123456789");
+        ClientRequestDTO request = createClientRequestDTO();
         Client savedClient = new Client("First", "Client", "00123456789", new ArrayList<>());
         ClientResponseDTO expectedResponse  = new ClientResponseDTO("First", "Client", "00123456789", new ArrayList<>());
         when(clientRepository.existsByDocument(any(String.class))).thenReturn(false);
@@ -61,7 +61,7 @@ public class ClientServiceTest {
     @DisplayName("Should throw DuplicateDocumentException.")
     void createClientDuplicateDocumentException() {
         // Arrange
-        ClientRequestDTO request = new ClientRequestDTO("First", "Client", "00123456789");
+        ClientRequestDTO request = createClientRequestDTO();
         when(clientRepository.existsByDocument(request.document())).thenReturn(true);
 
         // Act
@@ -74,5 +74,9 @@ public class ClientServiceTest {
         assertEquals("Document already registered.", thrown.getMessage());
         verify(clientRepository).existsByDocument(request.document());
         verify(clientRepository, never()).save(any(Client.class));
+    }
+
+    private ClientRequestDTO createClientRequestDTO() {
+        return new ClientRequestDTO("First", "Client", "00123456789");
     }
 }
