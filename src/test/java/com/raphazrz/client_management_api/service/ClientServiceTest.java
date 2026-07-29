@@ -160,6 +160,28 @@ public class ClientServiceTest {
         verify(clientRepository).existsByDocumentAndIdNot(request.document(), 1L);
     }
 
+    @Test
+    @DisplayName("Should throw DuplicateDocumentException.")
+    void updateClientByIdDuplicateDocumentException() {
+        // Arrange
+        UpdateClientRequestDTO request = createUpdateClientRequestDTO();
+        Client client = createClient();
+
+        when(clientQueryService.findClientById(1L)).thenReturn(client);
+        when(clientRepository.existsByDocumentAndIdNot(request.document(), 1L)).thenReturn(true);
+
+        // Act
+        DuplicateDocumentException thrown = assertThrows(
+                DuplicateDocumentException.class,
+                () -> clientService.updateClientById(1L, request)
+        );
+
+        // Assert
+        assertEquals("Document already registered.", thrown.getMessage());
+        verify(clientQueryService).findClientById(1L);
+        verify(clientRepository).existsByDocumentAndIdNot(request.document(), 1L);
+    }
+
     private ClientRequestDTO createClientRequestDTO() {
         return new ClientRequestDTO(
                 faker.name().firstName(),
