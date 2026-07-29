@@ -17,7 +17,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class ClientService { // CRIAR ClientQueryService
+public class ClientService {
     private final ContactService contactService;
     private final ClientRepository clientRepository;
     private final ClientQueryService clientQueryService;

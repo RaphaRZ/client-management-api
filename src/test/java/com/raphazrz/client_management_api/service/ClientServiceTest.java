@@ -1,6 +1,7 @@
 package com.raphazrz.client_management_api.service;
 
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
+import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
 import com.raphazrz.client_management_api.enumerator.ContactType;
@@ -46,12 +47,13 @@ public class ClientServiceTest {
 
 
     @Test
-    @DisplayName("Should return a new client as ClientResponseDTO.")
+    @DisplayName("Should return a new client as ClientResponseDTO Successfully.")
     void createClientSuccess() {
         // Arrange
         ClientRequestDTO request = createClientRequestDTO();
         Client savedClient = new Client(request.firstName(), request.lastName(), request.document(), new ArrayList<>());
         ClientResponseDTO expectedResponse  = new ClientResponseDTO(request.firstName(), request.lastName(), request.document(), new ArrayList<>());
+
         when(clientRepository.existsByDocument(any(String.class))).thenReturn(false);
         when(clientRepository.save(any(Client.class))).thenReturn(savedClient);
 
@@ -69,6 +71,7 @@ public class ClientServiceTest {
     void createClientDuplicateDocumentException() {
         // Arrange
         ClientRequestDTO request = createClientRequestDTO();
+
         when(clientRepository.existsByDocument(request.document())).thenReturn(true);
 
         // Act
@@ -91,6 +94,7 @@ public class ClientServiceTest {
         List<ClientResponseDTO> expectedResponse  = clients.stream()
                 .map(ClientMapper::toResponseDTO)
                 .toList();
+
         when(clientQueryService.findAllClients()).thenReturn(clients);
 
         // Act
@@ -107,6 +111,7 @@ public class ClientServiceTest {
         // Arrange
         Client client = createClient();
         ClientResponseDTO expectedResponse = ClientMapper.toResponseDTO(client);
+
         when(clientQueryService.findClientById(1L)).thenReturn(client);
 
         // Act
@@ -122,6 +127,7 @@ public class ClientServiceTest {
     void getAllContactsByClientIdSuccess() {
         // Arrange
         List<ClientContactResponseDTO> expectedResponse = List.of(createClientContactResponseDTO(), createClientContactResponseDTO());
+
         when(contactService.findAllContactsByClientId(1L)).thenReturn(expectedResponse);
 
         // Act
@@ -132,6 +138,31 @@ public class ClientServiceTest {
         verify(contactService).findAllContactsByClientId(1L);
     }
 
+    @Test
+    @DisplayName("Should update the client successfully.")
+    void updateClientByIdSuccess() {
+        // Arrange
+        UpdateClientRequestDTO request = createUpdateClientRequestDTO();
+
+        Client client = createClient();
+        ClientResponseDTO expectedResponse = new ClientResponseDTO(
+                request.firstName(),
+                request.lastName(),
+                request.document(),
+                new ArrayList<>()
+        );
+
+        when(clientQueryService.findClientById(1L)).thenReturn(client);
+        when(clientRepository.existsByDocumentAndIdNot(request.document(), 1L)).thenReturn(false);
+
+        // Act
+        ClientResponseDTO result = clientService.updateClientById(1L, request);
+
+        // Assert
+        assertEquals(expectedResponse, result);
+        verify(clientQueryService).findClientById(1L);
+        verify(clientRepository).existsByDocumentAndIdNot(request.document(), 1L);
+    }
 
     private ClientRequestDTO createClientRequestDTO() {
         return new ClientRequestDTO(
@@ -154,6 +185,14 @@ public class ClientServiceTest {
         return new ClientContactResponseDTO(
                 faker.options().option(ContactType.values()),
                 faker.text().text()
+        );
+    }
+
+    private UpdateClientRequestDTO createUpdateClientRequestDTO() {
+        return new UpdateClientRequestDTO(
+                faker.name().firstName(),
+                faker.name().lastName(),
+                faker.number().digits(11)
         );
     }
 }
