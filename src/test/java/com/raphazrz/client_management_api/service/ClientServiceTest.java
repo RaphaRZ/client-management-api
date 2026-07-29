@@ -195,12 +195,4 @@ public class ClientServiceTest {
                 faker.number().digits(11)
         );
     }
-
-    private ClientResponseDTO createClientResponseDTO() {
-        return new ClientResponseDTO(
-                faker.name().firstName(),
-                faker.name().lastName(),
-                faker.number().digits(11),
-                new ArrayList<>()
-        );
 }
