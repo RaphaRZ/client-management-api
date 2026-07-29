@@ -6,6 +6,7 @@ import com.raphazrz.client_management_api.mapper.ContactMapper;
 import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.model.Contact;
 import com.raphazrz.client_management_api.repository.ContactRepository;
+import com.raphazrz.client_management_api.util.TestDataFactory;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,8 +41,8 @@ public class ContactServiceTest {
     @DisplayName("Should return a new contact as ContactResponseDTO successfully.")
     void createContactSuccess() {
         // Arrange
-        ContactRequestDTO request = createContactRequestDTO();
-        Client client = createClient();
+        ContactRequestDTO request = TestDataFactory.createContactRequestDTO();
+        Client client = TestDataFactory.createClient();
 
         Contact savedContact = ContactMapper.toEntity(request);
         savedContact.setClient(client);
@@ -58,22 +59,5 @@ public class ContactServiceTest {
         assertEquals(expectedResponse, result);
         verify(clientQueryService).findClientById(request.clientId());
         verify(contactRepository).save(any(Contact.class));
-    }
-
-    private ContactRequestDTO createContactRequestDTO() {
-        return new ContactRequestDTO(
-                faker.number().numberBetween(1, 3),
-                faker.text().text(),
-                faker.number().randomNumber()
-        );
-    }
-
-    private Client createClient() {
-        return new Client(
-                faker.name().firstName(),
-                faker.name().lastName(),
-                faker.number().digits(11),
-                new ArrayList<>()
-        );
     }
 }

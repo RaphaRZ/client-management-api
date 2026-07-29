@@ -9,6 +9,7 @@ import com.raphazrz.client_management_api.exception.DuplicateDocumentException;
 import com.raphazrz.client_management_api.mapper.ClientMapper;
 import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.repository.ClientRepository;
+import com.raphazrz.client_management_api.util.TestDataFactory;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,8 +31,6 @@ import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 public class ClientServiceTest {
-    private static final Faker faker = new Faker();
-
     @Mock
     private ContactService contactService;
 
@@ -49,7 +48,7 @@ public class ClientServiceTest {
     @DisplayName("Should return a new client as ClientResponseDTO successfully.")
     void createClientSuccess() {
         // Arrange
-        ClientRequestDTO request = createClientRequestDTO();
+        ClientRequestDTO request = TestDataFactory.createClientRequestDTO();
         Client savedClient = new Client(request.firstName(), request.lastName(), request.document(), new ArrayList<>());
         ClientResponseDTO expectedResponse  = new ClientResponseDTO(request.firstName(), request.lastName(), request.document(), new ArrayList<>());
 
@@ -69,7 +68,7 @@ public class ClientServiceTest {
     @DisplayName("Should throw DuplicateDocumentException.")
     void createClientDuplicateDocumentException() {
         // Arrange
-        ClientRequestDTO request = createClientRequestDTO();
+        ClientRequestDTO request = TestDataFactory.createClientRequestDTO();
 
         when(clientRepository.existsByDocument(request.document())).thenReturn(true);
 
@@ -89,7 +88,7 @@ public class ClientServiceTest {
     @DisplayName("Should return all clients successfully.")
     void getClientsSuccess() {
         // Arrange
-        List<Client> clients = List.of(createClient(), createClient());
+        List<Client> clients = List.of(TestDataFactory.createClient(), TestDataFactory.createClient());
         List<ClientResponseDTO> expectedResponse  = clients.stream()
                 .map(ClientMapper::toResponseDTO)
                 .toList();
@@ -108,7 +107,7 @@ public class ClientServiceTest {
     @DisplayName("Should return the client successfully.")
     void getClientByIdSuccess() {
         // Arrange
-        Client client = createClient();
+        Client client = TestDataFactory.createClient();
         ClientResponseDTO expectedResponse = ClientMapper.toResponseDTO(client);
 
         when(clientQueryService.findClientById(1L)).thenReturn(client);
@@ -125,7 +124,7 @@ public class ClientServiceTest {
     @DisplayName("Should return all client contacts successfully.")
     void getAllContactsByClientIdSuccess() {
         // Arrange
-        List<ClientContactResponseDTO> expectedResponse = List.of(createClientContactResponseDTO(), createClientContactResponseDTO());
+        List<ClientContactResponseDTO> expectedResponse = List.of(TestDataFactory.createClientContactResponseDTO(), TestDataFactory.createClientContactResponseDTO());
 
         when(contactService.findAllContactsByClientId(1L)).thenReturn(expectedResponse);
 
@@ -141,8 +140,8 @@ public class ClientServiceTest {
     @DisplayName("Should update the client successfully.")
     void updateClientByIdSuccess() {
         // Arrange
-        UpdateClientRequestDTO request = createUpdateClientRequestDTO();
-        Client updatedClient = createClient();
+        UpdateClientRequestDTO request = TestDataFactory.createUpdateClientRequestDTO();
+        Client updatedClient = TestDataFactory.createClient();
 
         when(clientQueryService.findClientById(1L)).thenReturn(updatedClient);
         when(clientRepository.existsByDocumentAndIdNot(request.document(), 1L)).thenReturn(false);
@@ -163,8 +162,8 @@ public class ClientServiceTest {
     @DisplayName("Should throw DuplicateDocumentException.")
     void updateClientByIdDuplicateDocumentException() {
         // Arrange
-        UpdateClientRequestDTO request = createUpdateClientRequestDTO();
-        Client client = createClient();
+        UpdateClientRequestDTO request = TestDataFactory.createUpdateClientRequestDTO();
+        Client client = TestDataFactory.createClient();
 
         when(clientQueryService.findClientById(1L)).thenReturn(client);
         when(clientRepository.existsByDocumentAndIdNot(request.document(), 1L)).thenReturn(true);
@@ -185,7 +184,7 @@ public class ClientServiceTest {
     @DisplayName("Should delete the client successfully.")
     void deleteClientByIdSuccess() {
         // Arrange
-        Client client = createClient();
+        Client client = TestDataFactory.createClient();
 
         when(clientQueryService.findClientById(1L)).thenReturn(client);
 
@@ -195,37 +194,5 @@ public class ClientServiceTest {
         // Assert
         verify(clientQueryService).findClientById(1L);
         verify(clientRepository).delete(client);
-    }
-
-    private ClientRequestDTO createClientRequestDTO() {
-        return new ClientRequestDTO(
-                faker.name().firstName(),
-                faker.name().lastName(),
-                faker.number().digits(11)
-        );
-    }
-
-    private Client createClient() {
-        return new Client(
-                faker.name().firstName(),
-                faker.name().lastName(),
-                faker.number().digits(11),
-                new ArrayList<>()
-        );
-    }
-
-    private ClientContactResponseDTO createClientContactResponseDTO() {
-        return new ClientContactResponseDTO(
-                faker.options().option(ContactType.values()),
-                faker.text().text()
-        );
-    }
-
-    private UpdateClientRequestDTO createUpdateClientRequestDTO() {
-        return new UpdateClientRequestDTO(
-                faker.name().firstName(),
-                faker.name().lastName(),
-                faker.number().digits(11)
-        );
     }
 }
