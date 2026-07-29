@@ -1,5 +1,6 @@
 package com.raphazrz.client_management_api.service;
 
+import com.raphazrz.client_management_api.exception.ContactNotFoundException;
 import com.raphazrz.client_management_api.model.Contact;
 import com.raphazrz.client_management_api.repository.ContactRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 import static com.raphazrz.client_management_api.util.TestDataFactory.createContact;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,6 +40,23 @@ public class ContactQueryServiceTest {
 
         // Assert
         assertEquals(contact, result);
+        verify(contactRepository).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Should throw ContactNotFoundException.")
+    void findContactByIdContactNotFoundException() {
+        // Arrange
+        when(contactRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act
+        ContactNotFoundException thrown = assertThrows(
+                ContactNotFoundException.class,
+                () -> contactQueryService.findContactById(1L)
+        );
+
+        // Assert
+        assertEquals("Contact not found.", thrown.getMessage());
         verify(contactRepository).findById(1L);
     }
 }
