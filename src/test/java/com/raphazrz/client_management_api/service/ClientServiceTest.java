@@ -5,7 +5,6 @@ import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
 import com.raphazrz.client_management_api.enumerator.ContactType;
-import com.raphazrz.client_management_api.exception.ClientNotFoundException;
 import com.raphazrz.client_management_api.exception.DuplicateDocumentException;
 import com.raphazrz.client_management_api.mapper.ClientMapper;
 import com.raphazrz.client_management_api.model.Client;
@@ -47,7 +46,7 @@ public class ClientServiceTest {
 
 
     @Test
-    @DisplayName("Should return a new client as ClientResponseDTO Successfully.")
+    @DisplayName("Should return a new client as ClientResponseDTO successfully.")
     void createClientSuccess() {
         // Arrange
         ClientRequestDTO request = createClientRequestDTO();
