@@ -82,7 +82,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    @DisplayName("Should return treturn all clients successfully.")
+    @DisplayName("Should return all clients successfully.")
     void getClientsSuccess() {
         // Arrange
         List<Client> clients = List.of(createClient(), createClient());
@@ -99,21 +99,28 @@ public class ClientServiceTest {
         verify(clientQueryService).findAllClients();
     }
 
+    @Test
+    @DisplayName("Should return the client successfully.")
+    void getClientByIdSuccess() {
+        // Arrange
+        Client client = createClient();
+        ClientResponseDTO expectedResponse = ClientMapper.toResponseDTO(client);
+        when(clientQueryService.findClientById(any(Long.class))).thenReturn(client);
+
+        // Act
+        ClientResponseDTO result = clientService.getClientById(1L);
+
+        // Assert
+        assertEquals(expectedResponse, result);
+        verify(clientQueryService).findClientById(1L);
+    }
+
 
     private ClientRequestDTO createClientRequestDTO() {
         return new ClientRequestDTO(
                 faker.name().firstName(),
                 faker.name().lastName(),
                 faker.number().digits(11)
-        );
-    }
-
-    private ClientResponseDTO createClientResponseDTO() {
-        return new ClientResponseDTO(
-                faker.name().firstName(),
-                faker.name().lastName(),
-                faker.number().digits(11),
-                new ArrayList<>()
         );
     }
 

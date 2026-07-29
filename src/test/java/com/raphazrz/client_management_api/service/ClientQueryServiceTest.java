@@ -51,7 +51,7 @@ public class ClientQueryServiceTest {
     void findClientByIdSuccess() {
         // Arrange
         Client client = new Client("First", "Client", "00123456789", new ArrayList<>());
-        when(clientRepository.findById(any())).thenReturn(Optional.of(client));
+        when(clientRepository.findById(any(Long.class))).thenReturn(Optional.of(client));
 
         // Act
         Client result = clientQueryService.findClientById(1L);
