@@ -36,7 +36,29 @@ public class ContactServiceTest {
     private ContactService contactService;
 
 
+    @Test
+    @DisplayName("Should return a new contact as ContactResponseDTO successfully.")
+    void createContactSuccess() {
+        // Arrange
+        ContactRequestDTO request = createContactRequestDTO();
+        Client client = createClient();
 
+        Contact savedContact = ContactMapper.toEntity(request);
+        savedContact.setClient(client);
+
+        ContactResponseDTO expectedResponse = ContactMapper.toResponseDTO(savedContact);
+
+        when(clientQueryService.findClientById(request.clientId())).thenReturn(client);
+        when(contactRepository.save(any(Contact.class))).thenReturn(savedContact);
+
+        // Act
+        ContactResponseDTO result = contactService.createContact(request);
+
+        // Assert
+        assertEquals(expectedResponse, result);
+        verify(clientQueryService).findClientById(request.clientId());
+        verify(contactRepository).save(any(Contact.class));
+    }
 
     private ContactRequestDTO createContactRequestDTO() {
         return new ContactRequestDTO(
