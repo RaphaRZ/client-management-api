@@ -3,7 +3,6 @@ package com.raphazrz.client_management_api.service;
 import com.raphazrz.client_management_api.exception.ClientNotFoundException;
 import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.repository.ClientRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +16,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -51,7 +49,7 @@ public class ClientQueryServiceTest {
     void findClientByIdSuccess() {
         // Arrange
         Client client = new Client("First", "Client", "00123456789", new ArrayList<>());
-        when(clientRepository.findById(any(Long.class))).thenReturn(Optional.of(client));
+        when(clientRepository.findById(1L)).thenReturn(Optional.of(client));
 
         // Act
         Client result = clientQueryService.findClientById(1L);

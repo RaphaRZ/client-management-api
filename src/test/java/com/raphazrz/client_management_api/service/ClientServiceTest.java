@@ -1,7 +1,9 @@
 package com.raphazrz.client_management_api.service;
 
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
+import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
+import com.raphazrz.client_management_api.enumerator.ContactType;
 import com.raphazrz.client_management_api.exception.ClientNotFoundException;
 import com.raphazrz.client_management_api.exception.DuplicateDocumentException;
 import com.raphazrz.client_management_api.mapper.ClientMapper;
@@ -105,7 +107,7 @@ public class ClientServiceTest {
         // Arrange
         Client client = createClient();
         ClientResponseDTO expectedResponse = ClientMapper.toResponseDTO(client);
-        when(clientQueryService.findClientById(any(Long.class))).thenReturn(client);
+        when(clientQueryService.findClientById(1L)).thenReturn(client);
 
         // Act
         ClientResponseDTO result = clientService.getClientById(1L);
@@ -113,6 +115,21 @@ public class ClientServiceTest {
         // Assert
         assertEquals(expectedResponse, result);
         verify(clientQueryService).findClientById(1L);
+    }
+
+    @Test
+    @DisplayName("Should return all client contacts successfully.")
+    void getAllContactsByClientIdSuccess() {
+        // Arrange
+        List<ClientContactResponseDTO> expectedResponse = List.of(createClientContactResponseDTO(), createClientContactResponseDTO());
+        when(contactService.findAllContactsByClientId(1L)).thenReturn(expectedResponse);
+
+        // Act
+        List<ClientContactResponseDTO> result = clientService.getAllContactsByClientId(1L);
+
+        // Assert
+        assertEquals(expectedResponse, result);
+        verify(contactService).findAllContactsByClientId(1L);
     }
 
 
@@ -130,6 +147,13 @@ public class ClientServiceTest {
                 faker.name().lastName(),
                 faker.number().digits(11),
                 new ArrayList<>()
+        );
+    }
+
+    private ClientContactResponseDTO createClientContactResponseDTO() {
+        return new ClientContactResponseDTO(
+                faker.options().option(ContactType.values()),
+                faker.text().text()
         );
     }
 }
