@@ -10,10 +10,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.raphazrz.client_management_api.util.TestDataFactory.createClient;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
@@ -33,7 +33,7 @@ public class ClientQueryServiceTest {
     @DisplayName("Should return all clients successfully.")
     void findAllClientsSuccess() {
         // Arrange
-        List<Client> clients = List.of(new Client(), new Client());
+        List<Client> clients = List.of(createClient(), createClient());
         when(clientRepository.findAll()).thenReturn(clients);
 
         // Act
@@ -48,7 +48,7 @@ public class ClientQueryServiceTest {
     @DisplayName("Should return the client successfully.")
     void findClientByIdSuccess() {
         // Arrange
-        Client client = new Client("First", "Client", "00123456789", new ArrayList<>());
+        Client client = createClient();
         when(clientRepository.findById(1L)).thenReturn(Optional.of(client));
 
         // Act
