@@ -4,13 +4,10 @@ import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
-import com.raphazrz.client_management_api.enumerator.ContactType;
 import com.raphazrz.client_management_api.exception.DuplicateDocumentException;
 import com.raphazrz.client_management_api.mapper.ClientMapper;
 import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.repository.ClientRepository;
-import com.raphazrz.client_management_api.util.TestDataFactory;
-import net.datafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +18,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.raphazrz.client_management_api.util.TestDataFactory.createClient;
+import static com.raphazrz.client_management_api.util.TestDataFactory.createClientRequestDTO;
+import static com.raphazrz.client_management_api.util.TestDataFactory.createClientContactResponseDTO;
+import static com.raphazrz.client_management_api.util.TestDataFactory.createUpdateClientRequestDTO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,9 +49,9 @@ public class ClientServiceTest {
     @DisplayName("Should return a new client as ClientResponseDTO successfully.")
     void createClientSuccess() {
         // Arrange
-        ClientRequestDTO request = TestDataFactory.createClientRequestDTO();
+        ClientRequestDTO request = createClientRequestDTO();
         Client savedClient = new Client(request.firstName(), request.lastName(), request.document(), new ArrayList<>());
-        ClientResponseDTO expectedResponse  = new ClientResponseDTO(request.firstName(), request.lastName(), request.document(), new ArrayList<>());
+        ClientResponseDTO expectedResponse = new ClientResponseDTO(request.firstName(), request.lastName(), request.document(), new ArrayList<>());
 
         when(clientRepository.existsByDocument(any(String.class))).thenReturn(false);
         when(clientRepository.save(any(Client.class))).thenReturn(savedClient);
@@ -68,7 +69,7 @@ public class ClientServiceTest {
     @DisplayName("Should throw DuplicateDocumentException.")
     void createClientDuplicateDocumentException() {
         // Arrange
-        ClientRequestDTO request = TestDataFactory.createClientRequestDTO();
+        ClientRequestDTO request = createClientRequestDTO();
 
         when(clientRepository.existsByDocument(request.document())).thenReturn(true);
 
@@ -88,8 +89,8 @@ public class ClientServiceTest {
     @DisplayName("Should return all clients successfully.")
     void getClientsSuccess() {
         // Arrange
-        List<Client> clients = List.of(TestDataFactory.createClient(), TestDataFactory.createClient());
-        List<ClientResponseDTO> expectedResponse  = clients.stream()
+        List<Client> clients = List.of(createClient(), createClient());
+        List<ClientResponseDTO> expectedResponse = clients.stream()
                 .map(ClientMapper::toResponseDTO)
                 .toList();
 
@@ -107,7 +108,7 @@ public class ClientServiceTest {
     @DisplayName("Should return the client successfully.")
     void getClientByIdSuccess() {
         // Arrange
-        Client client = TestDataFactory.createClient();
+        Client client = createClient();
         ClientResponseDTO expectedResponse = ClientMapper.toResponseDTO(client);
 
         when(clientQueryService.findClientById(1L)).thenReturn(client);
@@ -124,7 +125,7 @@ public class ClientServiceTest {
     @DisplayName("Should return all client contacts successfully.")
     void getAllContactsByClientIdSuccess() {
         // Arrange
-        List<ClientContactResponseDTO> expectedResponse = List.of(TestDataFactory.createClientContactResponseDTO(), TestDataFactory.createClientContactResponseDTO());
+        List<ClientContactResponseDTO> expectedResponse = List.of(createClientContactResponseDTO(), createClientContactResponseDTO());
 
         when(contactService.findAllContactsByClientId(1L)).thenReturn(expectedResponse);
 
@@ -140,8 +141,8 @@ public class ClientServiceTest {
     @DisplayName("Should update the client successfully.")
     void updateClientByIdSuccess() {
         // Arrange
-        UpdateClientRequestDTO request = TestDataFactory.createUpdateClientRequestDTO();
-        Client updatedClient = TestDataFactory.createClient();
+        UpdateClientRequestDTO request = createUpdateClientRequestDTO();
+        Client updatedClient = createClient();
 
         when(clientQueryService.findClientById(1L)).thenReturn(updatedClient);
         when(clientRepository.existsByDocumentAndIdNot(request.document(), 1L)).thenReturn(false);
@@ -162,8 +163,8 @@ public class ClientServiceTest {
     @DisplayName("Should throw DuplicateDocumentException.")
     void updateClientByIdDuplicateDocumentException() {
         // Arrange
-        UpdateClientRequestDTO request = TestDataFactory.createUpdateClientRequestDTO();
-        Client client = TestDataFactory.createClient();
+        UpdateClientRequestDTO request = createUpdateClientRequestDTO();
+        Client client = createClient();
 
         when(clientQueryService.findClientById(1L)).thenReturn(client);
         when(clientRepository.existsByDocumentAndIdNot(request.document(), 1L)).thenReturn(true);
@@ -184,7 +185,7 @@ public class ClientServiceTest {
     @DisplayName("Should delete the client successfully.")
     void deleteClientByIdSuccess() {
         // Arrange
-        Client client = TestDataFactory.createClient();
+        Client client = createClient();
 
         when(clientQueryService.findClientById(1L)).thenReturn(client);
 

@@ -3,9 +3,11 @@ package com.raphazrz.client_management_api.util;
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
 import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
+import com.raphazrz.client_management_api.dto.request.UpdateContactRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.enumerator.ContactType;
 import com.raphazrz.client_management_api.model.Client;
+import com.raphazrz.client_management_api.model.Contact;
 import net.datafaker.Faker;
 
 import java.util.ArrayList;
@@ -54,4 +56,13 @@ public class TestDataFactory {
                 faker.number().randomNumber()
         );
     }
+
+    public static UpdateContactRequestDTO createUpdateContactRequestDTO() {
+        return new UpdateContactRequestDTO(
+                faker.number().numberBetween(1, 3),
+                faker.text().text()
+        );
+    }
+
+
 }
