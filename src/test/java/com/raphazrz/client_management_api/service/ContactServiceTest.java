@@ -8,7 +8,6 @@ import com.raphazrz.client_management_api.mapper.ContactMapper;
 import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.model.Contact;
 import com.raphazrz.client_management_api.repository.ContactRepository;
-import net.datafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,8 +29,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class ContactServiceTest {
-    private static final Faker faker = new Faker();
-
     @Mock
     private ClientQueryService clientQueryService;
 
@@ -83,5 +80,20 @@ public class ContactServiceTest {
         assertEquals(request.contact(), updatedContact.getContact());
         assertEquals(ContactMapper.toResponseDTO(updatedContact), result);
         verify(contactRepository).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Should delete the contact successfully.")
+    void deleteContactSucces() {
+        // Arrange
+        Contact contact = createContact();
+        when(contactRepository.findById(1L)).thenReturn(Optional.of(contact));
+
+        // Act
+        contactService.deleteContact(1L);
+
+        // Assert
+        verify(contactRepository).findById(1L);
+        verify(contactRepository).delete(contact);
     }
 }
