@@ -22,6 +22,7 @@ import java.util.List;
 public class ContactService {
     private final ClientQueryService clientQueryService;
     private final ContactRepository contactRepository;
+    private final ContactQueryService contactQueryService;
 
     @Transactional
     public ContactResponseDTO createContact(ContactRequestDTO request) {
@@ -37,7 +38,7 @@ public class ContactService {
 
     @Transactional
     public ContactResponseDTO updateContactById(Long id, UpdateContactRequestDTO request) {
-        Contact updatedContact = findContactById(id);
+        Contact updatedContact = contactQueryService.findContactById(id);
 
         updatedContact.setContactType(ContactType.fromType(request.contactType()));
         updatedContact.setContact(request.contact());
@@ -47,14 +48,9 @@ public class ContactService {
 
     @Transactional
     public void deleteContact(Long contactId) {
-        Contact contact = findContactById(contactId);
+        Contact contact = contactQueryService.findContactById(contactId);
 
         contactRepository.delete(contact);
-    }
-
-    public Contact findContactById(Long contactId) {
-        return contactRepository.findById(contactId)
-                .orElseThrow(ContactNotFoundException::new);
     }
 
     public List<ClientContactResponseDTO> findAllContactsByClientId(Long id) {
