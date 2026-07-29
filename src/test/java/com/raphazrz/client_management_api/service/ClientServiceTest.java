@@ -182,6 +182,22 @@ public class ClientServiceTest {
         verify(clientRepository).existsByDocumentAndIdNot(request.document(), 1L);
     }
 
+    @Test
+    @DisplayName("Should delete the client successfully.")
+    void deleteClientByIdSuccess() {
+        // Arrange
+        Client client = createClient();
+
+        when(clientQueryService.findClientById(1L)).thenReturn(client);
+
+        // Act
+        clientService.deleteClientById(1L);
+
+        // Assert
+        verify(clientQueryService).findClientById(1L);
+        verify(clientRepository).delete(client);
+    }
+
     private ClientRequestDTO createClientRequestDTO() {
         return new ClientRequestDTO(
                 faker.name().firstName(),
