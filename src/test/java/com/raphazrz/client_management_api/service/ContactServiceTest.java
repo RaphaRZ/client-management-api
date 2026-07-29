@@ -35,6 +35,9 @@ public class ContactServiceTest {
     @Mock
     private ContactRepository contactRepository;
 
+    @Mock
+    private ContactQueryService contactQueryService;
+
     @InjectMocks
     private ContactService contactService;
 
@@ -70,7 +73,7 @@ public class ContactServiceTest {
         UpdateContactRequestDTO request = createUpdateContactRequestDTO();
         Contact updatedContact = createContact();
 
-        when(contactRepository.findById(1L)).thenReturn(Optional.of(updatedContact));
+        when(contactQueryService.findContactById(1L)).thenReturn(updatedContact);
 
         // Act
         ContactResponseDTO result = contactService.updateContactById(1L, request);
@@ -79,7 +82,7 @@ public class ContactServiceTest {
         assertEquals(ContactType.fromType(request.contactType()), updatedContact.getContactType());
         assertEquals(request.contact(), updatedContact.getContact());
         assertEquals(ContactMapper.toResponseDTO(updatedContact), result);
-        verify(contactRepository).findById(1L);
+        verify(contactQueryService).findContactById(1L);
     }
 
     @Test
@@ -87,13 +90,13 @@ public class ContactServiceTest {
     void deleteContactSucces() {
         // Arrange
         Contact contact = createContact();
-        when(contactRepository.findById(1L)).thenReturn(Optional.of(contact));
+        when(contactQueryService.findContactById(1L)).thenReturn(contact);
 
         // Act
         contactService.deleteContact(1L);
 
         // Assert
-        verify(contactRepository).findById(1L);
+        verify(contactQueryService).findContactById(1L);
         verify(contactRepository).delete(contact);
     }
 }
