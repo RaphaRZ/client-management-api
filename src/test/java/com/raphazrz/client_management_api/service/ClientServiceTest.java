@@ -143,23 +143,19 @@ public class ClientServiceTest {
     void updateClientByIdSuccess() {
         // Arrange
         UpdateClientRequestDTO request = createUpdateClientRequestDTO();
+        Client updatedClient = createClient();
 
-        Client client = createClient();
-        ClientResponseDTO expectedResponse = new ClientResponseDTO(
-                request.firstName(),
-                request.lastName(),
-                request.document(),
-                new ArrayList<>()
-        );
-
-        when(clientQueryService.findClientById(1L)).thenReturn(client);
+        when(clientQueryService.findClientById(1L)).thenReturn(updatedClient);
         when(clientRepository.existsByDocumentAndIdNot(request.document(), 1L)).thenReturn(false);
 
         // Act
         ClientResponseDTO result = clientService.updateClientById(1L, request);
 
         // Assert
-        assertEquals(expectedResponse, result);
+        assertEquals(request.firstName(), updatedClient.getFirstName());
+        assertEquals(request.lastName(), updatedClient.getLastName());
+        assertEquals(request.document(), updatedClient.getDocument());
+        assertEquals(ClientMapper.toResponseDTO(updatedClient), result);
         verify(clientQueryService).findClientById(1L);
         verify(clientRepository).existsByDocumentAndIdNot(request.document(), 1L);
     }
