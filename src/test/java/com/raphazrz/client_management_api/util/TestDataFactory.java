@@ -64,5 +64,11 @@ public class TestDataFactory {
         );
     }
 
-
+    public static Contact createContact() {
+        return new Contact(
+                faker.options().option(ContactType.values()),
+                faker.text().text(),
+                createClient()
+        );
+    }
 }
