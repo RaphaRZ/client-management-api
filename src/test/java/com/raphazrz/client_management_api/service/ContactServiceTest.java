@@ -2,6 +2,7 @@ package com.raphazrz.client_management_api.service;
 
 import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
 import com.raphazrz.client_management_api.dto.request.UpdateContactRequestDTO;
+import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.response.ContactResponseDTO;
 import com.raphazrz.client_management_api.enumerator.ContactType;
 import com.raphazrz.client_management_api.mapper.ContactMapper;
@@ -15,7 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
+import java.util.List;
 
 import static com.raphazrz.client_management_api.util.TestDataFactory.createClient;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createContactRequestDTO;
@@ -98,5 +99,26 @@ public class ContactServiceTest {
         // Assert
         verify(contactQueryService).findContactById(1L);
         verify(contactRepository).delete(contact);
+    }
+
+    @Test
+    @DisplayName("Should return all client contacts successfully.")
+    void findAllContactsByClientIdSuccess() {
+        // Arrange
+        Client client = createClient();
+        client.setContacts(List.of(createContact(), createContact()));
+
+        List<ClientContactResponseDTO> expectedResponse = client.getContacts().stream()
+                .map(ContactMapper::toClientContactResponseDTO)
+                .toList();
+
+        when(clientQueryService.findClientById(1L)).thenReturn(client);
+
+        // Act
+        List<ClientContactResponseDTO> result = contactService.findAllContactsByClientId(1L);
+
+        // Assert
+        assertEquals(expectedResponse, result);
+        verify(clientQueryService).findClientById(1L);
     }
 }
