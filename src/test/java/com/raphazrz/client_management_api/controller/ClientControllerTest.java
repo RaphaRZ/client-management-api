@@ -3,6 +3,7 @@ package com.raphazrz.client_management_api.controller;
 
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
+import com.raphazrz.client_management_api.exception.DuplicateDocumentException;
 import com.raphazrz.client_management_api.service.ClientService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -77,5 +78,23 @@ class ClientControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(clientService, never()).createClient(any());
+    }
+
+    @Test
+    @DisplayName("Should return status 409 Conflict.")
+    void createClientDuplicateDocumentException() throws Exception {
+        // Arrange
+        ClientRequestDTO request = createClientRequestDTO();
+        when(clientService.createClient(request)).thenThrow(new DuplicateDocumentException());
+
+        // Act & Assert
+        mockMvc.perform(
+                        post("/clients")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(status().isConflict());
+
+        verify(clientService).createClient(request);
     }
 }
