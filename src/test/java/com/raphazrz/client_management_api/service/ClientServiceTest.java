@@ -15,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.raphazrz.client_management_api.util.TestDataFactory.createClient;
@@ -50,10 +49,10 @@ public class ClientServiceTest {
     void createClientSuccess() {
         // Arrange
         ClientRequestDTO request = createClientRequestDTO();
-        Client savedClient = new Client(request.firstName(), request.lastName(), request.document(), new ArrayList<>());
-        ClientResponseDTO expectedResponse = new ClientResponseDTO(request.firstName(), request.lastName(), request.document(), new ArrayList<>());
+        Client savedClient = createClient();
+        ClientResponseDTO expectedResponse = ClientMapper.toResponseDTO(savedClient);
 
-        when(clientRepository.existsByDocument(any(String.class))).thenReturn(false);
+        when(clientRepository.existsByDocument(request.document())).thenReturn(false);
         when(clientRepository.save(any(Client.class))).thenReturn(savedClient);
 
         // Act
