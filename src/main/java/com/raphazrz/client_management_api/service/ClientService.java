@@ -68,12 +68,12 @@ public class ClientService {
 
     private void validateUniqueDocument(String document) {
         if (clientRepository.existsByDocument(document))
-            throw new DuplicateDocumentException("Document already registered.");
+            throw new DuplicateDocumentException();
     }
 
     private void validateUniqueDocument(String document, Long id) {
         if (clientRepository.existsByDocumentAndIdNot(document, id))
-            throw new DuplicateDocumentException("Document already registered.");
+            throw new DuplicateDocumentException();
     }
 
     private Client saveClient(Client client) {
