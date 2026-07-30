@@ -5,7 +5,9 @@ import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
 import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
 import com.raphazrz.client_management_api.dto.request.UpdateContactRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
+import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
 import com.raphazrz.client_management_api.enumerator.ContactType;
+import com.raphazrz.client_management_api.mapper.ClientMapper;
 import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.model.Contact;
 import net.datafaker.Faker;
@@ -23,6 +25,10 @@ public class TestDataFactory {
                 faker.name().lastName(),
                 faker.number().digits(11)
         );
+    }
+
+    public static ClientResponseDTO createClientResponseDTO() {
+        return ClientMapper.toResponseDTO(createClient());
     }
 
     public static Client createClient() {
