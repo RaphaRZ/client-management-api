@@ -15,8 +15,10 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 
 import static com.raphazrz.client_management_api.util.TestDataFactory.createClientRequestDTO;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createClientResponseDTO;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,5 +56,26 @@ class ClientControllerTest {
                 .andExpect(jsonPath("$.document").value(expectedResponse.document()));
 
         verify(clientService).createClient(request);
+    }
+
+    @Test
+    @DisplayName("Should return status 400 Bad Request.")
+    void createClientBadRequest() throws Exception {
+        // Arrange
+        ClientRequestDTO request = new ClientRequestDTO(
+                "",
+                "Client",
+                "123"
+        );
+
+        // Act & Assert
+        mockMvc.perform(
+                        post("/clients")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(status().isBadRequest());
+
+        verify(clientService, never()).createClient(any());
     }
 }
