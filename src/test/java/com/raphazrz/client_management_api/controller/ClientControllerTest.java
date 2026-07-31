@@ -2,6 +2,7 @@ package com.raphazrz.client_management_api.controller;
 
 
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
+import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
 import com.raphazrz.client_management_api.exception.ClientNotFoundException;
@@ -21,12 +22,14 @@ import java.util.List;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createClientRequestDTO;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createClientResponseDTO;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createClientContactResponseDTO;
+import static com.raphazrz.client_management_api.util.TestDataFactory.createUpdateClientRequestDTO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -60,7 +63,8 @@ class ClientControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.firstName").value(expectedResponse.firstName()))
                 .andExpect(jsonPath("$.lastName").value(expectedResponse.lastName()))
-                .andExpect(jsonPath("$.document").value(expectedResponse.document()));
+                .andExpect(jsonPath("$.document").value(expectedResponse.document()))
+                .andExpect(jsonPath("$.contacts.length()").value(expectedResponse.contacts().size()));
 
         verify(clientService).createClient(request);
     }
@@ -122,9 +126,11 @@ class ClientControllerTest {
                 .andExpect(jsonPath("$[0].firstName").value(expectedResponse.getFirst().firstName()))
                 .andExpect(jsonPath("$[0].lastName").value(expectedResponse.getFirst().lastName()))
                 .andExpect(jsonPath("$[0].document").value(expectedResponse.getFirst().document()))
+                .andExpect(jsonPath("$[0]..contacts.length()").value(expectedResponse.getFirst().contacts().size()))
                 .andExpect(jsonPath("$[1].firstName").value(expectedResponse.get(1).firstName()))
                 .andExpect(jsonPath("$[1].lastName").value(expectedResponse.get(1).lastName()))
-                .andExpect(jsonPath("$[1].document").value(expectedResponse.get(1).document()));
+                .andExpect(jsonPath("$[1].document").value(expectedResponse.get(1).document()))
+                .andExpect(jsonPath("$[1].contacts.length()").value(expectedResponse.getFirst().contacts().size()));
 
         verify(clientService).getClients();
     }
@@ -199,5 +205,28 @@ class ClientControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(clientService).getAllContactsByClientId(id);
+    }
+
+    @Test
+    @DisplayName("Should return status 200 Ok.")
+    void updateClientByIdOk() throws Exception {
+        // Arrange
+        Long id = 1L;
+        UpdateClientRequestDTO request = createUpdateClientRequestDTO();
+        ClientResponseDTO expectedResponse = createClientResponseDTO();
+
+        when(clientService.updateClientById(id, request)).thenReturn(expectedResponse);
+
+        // Act & Assert
+        mockMvc.perform(put("/clients/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value(expectedResponse.firstName()))
+                .andExpect(jsonPath("$.lastName").value(expectedResponse.lastName()))
+                .andExpect(jsonPath("$.document").value(expectedResponse.document()))
+                .andExpect(jsonPath("$.contacts.length()").value(expectedResponse.contacts().size()));
+
+        verify(clientService).updateClientById(id, request);
     }
 }
