@@ -2,6 +2,7 @@ package com.raphazrz.client_management_api.controller;
 
 import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ContactResponseDTO;
+import com.raphazrz.client_management_api.exception.ClientNotFoundException;
 import com.raphazrz.client_management_api.service.ContactService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -75,5 +76,25 @@ public class ContactControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(contactService, never()).createContact(any(ContactRequestDTO.class));
+    }
+
+    @Test
+    @DisplayName("Should return status 404 Not Found.")
+    void createContactClientNotFoundException() throws Exception {
+        // Arrange
+        ContactRequestDTO request = createContactRequestDTO();
+
+        when(contactService.createContact(request))
+                .thenThrow(new ClientNotFoundException());
+
+        // Act & Assert
+        mockMvc.perform(
+                        post("/contacts")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(status().isNotFound());
+
+        verify(contactService).createContact(request);
     }
 }
