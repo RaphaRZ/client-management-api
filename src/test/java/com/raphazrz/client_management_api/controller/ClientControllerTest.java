@@ -229,4 +229,25 @@ class ClientControllerTest {
 
         verify(clientService).updateClientById(id, request);
     }
+
+    @Test
+    @DisplayName("Should return status 409 Conflict.")
+    void updateClientByIdDuplicateDocumentException() throws Exception {
+        // Arrange
+        Long id = 1L;
+        UpdateClientRequestDTO request = createUpdateClientRequestDTO();
+
+        when(clientService.updateClientById(id, request))
+                .thenThrow(new DuplicateDocumentException());
+
+        // Act & Assert
+        mockMvc.perform(
+                        put("/clients/{id}", id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(status().isConflict());
+
+        verify(clientService).updateClientById(id, request);
+    }
 }
