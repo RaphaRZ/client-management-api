@@ -147,4 +147,25 @@ public class ContactControllerTest {
         verify(contactService, never())
                 .updateContactById(any(Long.class), any(UpdateContactRequestDTO.class));
     }
+
+    @Test
+    @DisplayName("Should return status 404 Not Found.")
+    void updateContactByIdClientNotFoundException() throws Exception {
+        // Arrange
+        Long id = 1L;
+        UpdateContactRequestDTO request = createUpdateContactRequestDTO();
+
+        when(contactService.updateContactById(id, request))
+                .thenThrow(new ClientNotFoundException());
+
+        // Act & Assert
+        mockMvc.perform(
+                        put("/contacts/{id}", id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(status().isNotFound());
+
+        verify(contactService).updateContactById(id, request);
+    }
 }
