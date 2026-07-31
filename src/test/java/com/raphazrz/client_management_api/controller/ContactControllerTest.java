@@ -18,11 +18,8 @@ import static com.raphazrz.client_management_api.util.TestDataFactory.createCont
 import static com.raphazrz.client_management_api.util.TestDataFactory.createContactResponseDTO;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createUpdateContactRequestDTO;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -167,5 +164,20 @@ public class ContactControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(contactService).updateContactById(id, request);
+    }
+
+    @Test
+    @DisplayName("Should return status 204 No Content.")
+    void deleteContactNoContent() throws Exception {
+        // Arrange
+        Long id = 1L;
+
+        doNothing().when(contactService).deleteContact(id);
+
+        // Act & Assert
+        mockMvc.perform(delete("/contacts/{id}", id))
+                .andExpect(status().isNoContent());
+
+        verify(contactService).deleteContact(id);
     }
 }
