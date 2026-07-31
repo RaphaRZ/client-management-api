@@ -1,41 +1,84 @@
+# Client Management API
+
 ## Overview
 
-REST API for managing clients and their contacts. Each client can have one or more associated contacts.
+REST API for managing clients and their contacts, allowing creation, retrieval, updating, and deletion of client information and associated contacts.
 
-## Technical Requirements
+Each client can have multiple contacts, while each contact belongs to exactly one client.
 
-The application must provide:
+## Technologies
 
-* Create a client: `POST /clients`
-* List all clients with their contacts: `GET /clients`
-* Get a client by ID: `GET /clients/{id}`
-* List contacts for a specific client: `GET /clients/{id}/contacts`
-* Update a client's first name, last name, and document: `PUT /clients/{id}`
-* Delete a client: `DELETE /clients/{id}`
-* Create a contact associated with an existing client: `POST /contacts`
-* Update a contact's type and value: `PUT /contacts/{id}`
-* Delete a contact: `DELETE /contacts/{id}`
-* Spring Boot + Spring Data JPA
-* PostgreSQL database
+- Java 25
+- Spring Boot
+- Spring Data JPA
+- PostgreSQL
+- Lombok
+- Jakarta Validation
+- Docker
+- Swagger/OpenAPI
+- JUnit 5
+- Mockito
+- MockMvc
 
-## Code Requirements
+## API Endpoints
 
-The code should follow good development practices, including:
+### Clients
 
-* Clear separation of responsibilities (`controller`, `service`, `repository`)
-* DTOs for request and response objects
-* Proper exception handling
-* Use of Lombok
-* Docker for PostgreSQL setup
-* Automated tests
-* Swagger/OpenAPI documentation
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/clients` | Create a client |
+| GET | `/clients` | List all clients with contacts |
+| GET | `/clients/{id}` | Get a client by ID |
+| GET | `/clients/{id}/contacts` | List contacts from a client |
+| PUT | `/clients/{id}` | Update client information |
+| DELETE | `/clients/{id}` | Delete a client and its contacts |
+
+### Contacts
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/contacts` | Create a contact associated with a client |
+| PUT | `/contacts/{id}` | Update a contact |
+| DELETE | `/contacts/{id}` | Delete a contact |
+
+## Code Structure
+
+The application follows a layered architecture:
+
+- **Controller:** Handles HTTP requests and responses
+- **Service:** Contains business rules and application logic
+- **Repository:** Responsible for database access
+- **DTOs:** Separate API contracts from persistence entities
+- **Mapper:** Handles entity and DTO conversions
 
 ## Business Rules
-* Clients must have a first name, last name, and document. Contacts are optional
-* The document must be unique in the database. The system does not allow two clients with the same document
-* A client can have multiple contacts
-* Every contact must belong to exactly one client
-* When a client is deleted, all of their associated contacts must also be deleted
+
+- Clients must have a first name, last name, and document.
+- Contacts are optional when creating a client.
+- Client documents must be unique.
+- A client can have multiple contacts.
+- Each contact belongs to exactly one client.
+- Deleting a client also deletes all associated contacts.
+
+## Testing
+
+The project includes automated tests covering:
+
+- Service layer unit tests using JUnit 5 and Mockito.
+- Web layer tests using MockMvc.
+- Validation scenarios.
+- Exception handling scenarios.
+- HTTP status contract validation.
+
+## Documentation
+
+API documentation is available through Swagger/OpenAPI.
+
+## Database
+
+The application uses PostgreSQL.
+
+A Docker environment is provided to simplify local database setup.
 
 ## License
 
