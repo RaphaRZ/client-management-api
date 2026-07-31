@@ -187,25 +187,16 @@ class ClientControllerTest {
     }
 
     @Test
-    @DisplayName("Should return status 200 Ok.")
-    void getAllContactsByClientIdClientNotFound() throws Exception {
+    @DisplayName("Should return status 404 Not Found.")
+    void getAllContactsByClientIdClientNotFoundException() throws Exception {
         // Arrange
         Long id = 1L;
-        List<ClientContactResponseDTO> expectedResponse = List.of(
-                createClientContactResponseDTO(),
-                createClientContactResponseDTO()
-        );
 
-        when(clientService.getAllContactsByClientId(id)).thenReturn(expectedResponse);
+        when(clientService.getAllContactsByClientId(id)).thenThrow(new ClientNotFoundException());
 
         // Act & Assert
         mockMvc.perform(get("/clients/{id}/contacts", id))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(expectedResponse.size()))
-                .andExpect(jsonPath("$[0].contactType").value(expectedResponse.getFirst().contactType().name()))
-                .andExpect(jsonPath("$[0].contact").value(expectedResponse.getFirst().contact()))
-                .andExpect(jsonPath("$[1].contactType").value(expectedResponse.get(1).contactType().name()))
-                .andExpect(jsonPath("$[1].contact").value(expectedResponse.get(1).contact()));
+                .andExpect(status().isNotFound());
 
         verify(clientService).getAllContactsByClientId(id);
     }
