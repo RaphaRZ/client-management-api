@@ -14,12 +14,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 
-import static com.raphazrz.client_management_api.util.TestDataFactory.createClientRequestDTO;
-import static com.raphazrz.client_management_api.util.TestDataFactory.createClientResponseDTO;
+import java.util.List;
+
+import static com.raphazrz.client_management_api.util.TestDataFactory.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,7 +39,7 @@ class ClientControllerTest {
     private ClientService clientService;
 
     @Test
-    @DisplayName("Should create a new client successfully.")
+    @DisplayName("Should return status 201 Created.")
     void createClientCreated() throws Exception {
         // Arrange
         ClientRequestDTO request = createClientRequestDTO();
@@ -96,5 +98,30 @@ class ClientControllerTest {
                 .andExpect(status().isConflict());
 
         verify(clientService).createClient(request);
+    }
+
+    @Test
+    @DisplayName("Should return status 200 OK.")
+    void getClientsOk() throws Exception {
+        // Arrange
+        List<ClientResponseDTO> expectedResponse = List.of(
+                createClientResponseDTO(),
+                createClientResponseDTO()
+        );
+
+        when(clientService.getClients()).thenReturn(expectedResponse);
+
+        // Act & Assert
+        mockMvc.perform(get("/clients"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(expectedResponse.size()))
+                .andExpect(jsonPath("$[0].firstName").value(expectedResponse.getFirst().firstName()))
+                .andExpect(jsonPath("$[0].lastName").value(expectedResponse.getFirst().lastName()))
+                .andExpect(jsonPath("$[0].document").value(expectedResponse.getFirst().document()))
+                .andExpect(jsonPath("$[1].firstName").value(expectedResponse.get(1).firstName()))
+                .andExpect(jsonPath("$[1].lastName").value(expectedResponse.get(1).lastName()))
+                .andExpect(jsonPath("$[1].document").value(expectedResponse.get(1).document()));
+
+        verify(clientService).getClients();
     }
 }
