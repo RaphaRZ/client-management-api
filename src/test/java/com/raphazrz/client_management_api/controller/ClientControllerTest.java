@@ -2,6 +2,7 @@ package com.raphazrz.client_management_api.controller;
 
 
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
+import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
 import com.raphazrz.client_management_api.exception.ClientNotFoundException;
 import com.raphazrz.client_management_api.exception.DuplicateDocumentException;
@@ -17,7 +18,9 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 
 import java.util.List;
 
-import static com.raphazrz.client_management_api.util.TestDataFactory.*;
+import static com.raphazrz.client_management_api.util.TestDataFactory.createClientRequestDTO;
+import static com.raphazrz.client_management_api.util.TestDataFactory.createClientResponseDTO;
+import static com.raphazrz.client_management_api.util.TestDataFactory.createClientContactResponseDTO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -157,5 +160,29 @@ class ClientControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(clientService).getClientById(id);
+    }
+
+    @Test
+    @DisplayName("Should return status 200 Ok.")
+    void getAllContactsByClientIdOk() throws Exception {
+        // Arrange
+        Long id = 1L;
+        List<ClientContactResponseDTO> expectedResponse = List.of(
+                createClientContactResponseDTO(),
+                createClientContactResponseDTO()
+        );
+
+        when(clientService.getAllContactsByClientId(id)).thenReturn(expectedResponse);
+
+        // Act & Assert
+        mockMvc.perform(get("/clients/{id}/contacts", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(expectedResponse.size()))
+                .andExpect(jsonPath("$[0].contactType").value(expectedResponse.getFirst().contactType().name()))
+                .andExpect(jsonPath("$[0].contact").value(expectedResponse.getFirst().contact()))
+                .andExpect(jsonPath("$[1].contactType").value(expectedResponse.get(1).contactType().name()))
+                .andExpect(jsonPath("$[1].contact").value(expectedResponse.get(1).contact()));
+
+        verify(clientService).getAllContactsByClientId(id);
     }
 }
