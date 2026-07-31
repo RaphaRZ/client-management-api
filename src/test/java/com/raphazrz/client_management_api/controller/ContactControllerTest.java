@@ -1,6 +1,7 @@
 package com.raphazrz.client_management_api.controller;
 
 import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
+import com.raphazrz.client_management_api.dto.request.UpdateContactRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ContactResponseDTO;
 import com.raphazrz.client_management_api.exception.ClientNotFoundException;
 import com.raphazrz.client_management_api.service.ContactService;
@@ -15,11 +16,13 @@ import tools.jackson.databind.ObjectMapper;
 
 import static com.raphazrz.client_management_api.util.TestDataFactory.createContactRequestDTO;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createContactResponseDTO;
+import static com.raphazrz.client_management_api.util.TestDataFactory.createUpdateContactRequestDTO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -96,5 +99,30 @@ public class ContactControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(contactService).createContact(request);
+    }
+
+    @Test
+    @DisplayName("Should return status 200 Ok.")
+    void updateContactByIdOk() throws Exception {
+        // Arrange
+        Long id = 1L;
+        UpdateContactRequestDTO request = createUpdateContactRequestDTO();
+        ContactResponseDTO expectedResponse = createContactResponseDTO();
+
+        when(contactService.updateContactById(id, request))
+                .thenReturn(expectedResponse);
+
+        // Act & Assert
+        mockMvc.perform(
+                        put("/contacts/{id}", id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.contactType").value(expectedResponse.contactType().name()))
+                .andExpect(jsonPath("$.contact").value(expectedResponse.contact()))
+                .andExpect(jsonPath("$.clientId").value(expectedResponse.clientId()));
+
+        verify(contactService).updateContactById(id, request);
     }
 }
