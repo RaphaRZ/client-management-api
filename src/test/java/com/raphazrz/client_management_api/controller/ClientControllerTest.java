@@ -3,6 +3,7 @@ package com.raphazrz.client_management_api.controller;
 
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
+import com.raphazrz.client_management_api.exception.ClientNotFoundException;
 import com.raphazrz.client_management_api.exception.DuplicateDocumentException;
 import com.raphazrz.client_management_api.service.ClientService;
 import org.junit.jupiter.api.DisplayName;
@@ -101,7 +102,7 @@ class ClientControllerTest {
     }
 
     @Test
-    @DisplayName("Should return status 200 OK.")
+    @DisplayName("Should return status 200 Ok.")
     void getClientsOk() throws Exception {
         // Arrange
         List<ClientResponseDTO> expectedResponse = List.of(
@@ -126,7 +127,7 @@ class ClientControllerTest {
     }
 
     @Test
-    @DisplayName("Should return status 200 OK.")
+    @DisplayName("Should return status 200 Ok.")
     void getClientByIdOk() throws Exception {
         // Arrange
         Long id = 1L;
@@ -140,6 +141,20 @@ class ClientControllerTest {
                 .andExpect(jsonPath("$.firstName").value(expectedResponse.firstName()))
                 .andExpect(jsonPath("$.lastName").value(expectedResponse.lastName()))
                 .andExpect(jsonPath("$.document").value(expectedResponse.document()));
+
+        verify(clientService).getClientById(id);
+    }
+
+    @Test
+    @DisplayName("Should return status 404 Not Found.")
+    void getClientByIdClientNotFoundException() throws Exception {
+        // Arrange
+        Long id = 1L;
+        when(clientService.getClientById(id)).thenThrow(new ClientNotFoundException());
+
+        // Act & Assert
+        mockMvc.perform(get("/clients/{id}", id))
+                .andExpect(status().isNotFound());
 
         verify(clientService).getClientById(id);
     }
