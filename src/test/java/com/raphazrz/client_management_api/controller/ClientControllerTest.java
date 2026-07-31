@@ -124,4 +124,23 @@ class ClientControllerTest {
 
         verify(clientService).getClients();
     }
+
+    @Test
+    @DisplayName("Should return status 200 OK.")
+    void getClientByIdOk() throws Exception {
+        // Arrange
+        Long id = 1L;
+        ClientResponseDTO expectedResponse = createClientResponseDTO();
+
+        when(clientService.getClientById(id)).thenReturn(expectedResponse);
+
+        // Act & Assert
+        mockMvc.perform(get("/clients/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value(expectedResponse.firstName()))
+                .andExpect(jsonPath("$.lastName").value(expectedResponse.lastName()))
+                .andExpect(jsonPath("$.document").value(expectedResponse.document()));
+
+        verify(clientService).getClientById(id);
+    }
 }
