@@ -231,6 +231,28 @@ class ClientControllerTest {
     }
 
     @Test
+    @DisplayName("Should return status 400 Bad Request.")
+    void updateClientByIdBadRequest() throws Exception {
+        // Arrange
+        Long id = 1L;
+        UpdateClientRequestDTO request = new UpdateClientRequestDTO(
+                "",
+                "Client",
+                "123"
+        );
+
+        // Act & Assert
+        mockMvc.perform(
+                        put("/clients/{id}", id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(status().isBadRequest());
+
+        verify(clientService, never()).updateClientById(any(), any());
+    }
+
+    @Test
     @DisplayName("Should return status 409 Conflict.")
     void updateClientByIdDuplicateDocumentException() throws Exception {
         // Arrange
