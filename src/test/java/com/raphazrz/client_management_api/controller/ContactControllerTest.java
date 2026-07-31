@@ -18,8 +18,14 @@ import static com.raphazrz.client_management_api.util.TestDataFactory.createCont
 import static com.raphazrz.client_management_api.util.TestDataFactory.createContactResponseDTO;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createUpdateContactRequestDTO;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -177,6 +183,23 @@ public class ContactControllerTest {
         // Act & Assert
         mockMvc.perform(delete("/contacts/{id}", id))
                 .andExpect(status().isNoContent());
+
+        verify(contactService).deleteContact(id);
+    }
+
+    @Test
+    @DisplayName("Should return status 404 Not Found.")
+    void deleteContactClientNotFoundException() throws Exception {
+        // Arrange
+        Long id = 1L;
+
+        doThrow(new ClientNotFoundException())
+                .when(contactService)
+                .deleteContact(id);
+
+        // Act & Assert
+        mockMvc.perform(delete("/contacts/{id}", id))
+                .andExpect(status().isNotFound());
 
         verify(contactService).deleteContact(id);
     }
