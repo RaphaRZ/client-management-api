@@ -125,4 +125,26 @@ public class ContactControllerTest {
 
         verify(contactService).updateContactById(id, request);
     }
+
+    @Test
+    @DisplayName("Should return status 400 Bad Request.")
+    void updateContactByIdBadRequest() throws Exception {
+        // Arrange
+        Long id = 1L;
+        UpdateContactRequestDTO request = new UpdateContactRequestDTO(
+                null,
+                ""
+        );
+
+        // Act & Assert
+        mockMvc.perform(
+                        put("/contacts/{id}", id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(status().isBadRequest());
+
+        verify(contactService, never())
+                .updateContactById(any(Long.class), any(UpdateContactRequestDTO.class));
+    }
 }
