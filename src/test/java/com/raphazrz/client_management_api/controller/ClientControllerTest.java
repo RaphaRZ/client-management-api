@@ -27,9 +27,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -87,7 +89,7 @@ class ClientControllerTest {
                 )
                 .andExpect(status().isBadRequest());
 
-        verify(clientService, never()).createClient(any());
+        verify(clientService, never()).createClient(any(ClientRequestDTO.class));
     }
 
     @Test
@@ -249,7 +251,7 @@ class ClientControllerTest {
                 )
                 .andExpect(status().isBadRequest());
 
-        verify(clientService, never()).updateClientById(any(), any());
+        verify(clientService, never()).updateClientById(any(Long.class), any(UpdateClientRequestDTO.class));
     }
 
     @Test
@@ -271,5 +273,20 @@ class ClientControllerTest {
                 .andExpect(status().isConflict());
 
         verify(clientService).updateClientById(id, request);
+    }
+
+    @Test
+    @DisplayName("Should return status 204 No Content.")
+    void deleteClientByIdNoContent() throws Exception {
+        // Arrange
+        Long id = 1L;
+
+        doNothing().when(clientService).deleteClientById(id);
+
+        // Act & Assert
+        mockMvc.perform(delete("/clients/{id}", id))
+                .andExpect(status().isNoContent());
+
+        verify(clientService).deleteClientById(id);
     }
 }
