@@ -14,8 +14,10 @@ import tools.jackson.databind.ObjectMapper;
 
 import static com.raphazrz.client_management_api.util.TestDataFactory.createContactRequestDTO;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createContactResponseDTO;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,5 +54,26 @@ public class ContactControllerTest {
                 .andExpect(jsonPath("$.clientId").value(expectedResponse.clientId()));
 
         verify(contactService).createContact(request);
+    }
+
+    @Test
+    @DisplayName("Should return status 400 Bad Request.")
+    void createContactBadRequest() throws Exception {
+        // Arrange
+        ContactRequestDTO request = new ContactRequestDTO(
+                null,
+                "",
+                null
+        );
+
+        // Act & Assert
+        mockMvc.perform(
+                        post("/contacts")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(status().isBadRequest());
+
+        verify(contactService, never()).createContact(any(ContactRequestDTO.class));
     }
 }
