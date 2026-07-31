@@ -28,6 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -286,6 +287,23 @@ class ClientControllerTest {
         // Act & Assert
         mockMvc.perform(delete("/clients/{id}", id))
                 .andExpect(status().isNoContent());
+
+        verify(clientService).deleteClientById(id);
+    }
+
+    @Test
+    @DisplayName("Should return status 404 Not Found.")
+    void deleteClientByIdNotFound() throws Exception {
+        // Arrange
+        Long id = 1L;
+
+        doThrow(new ClientNotFoundException())
+                .when(clientService)
+                .deleteClientById(id);
+
+        // Act & Assert
+        mockMvc.perform(delete("/clients/{id}", id))
+                .andExpect(status().isNotFound());
 
         verify(clientService).deleteClientById(id);
     }
