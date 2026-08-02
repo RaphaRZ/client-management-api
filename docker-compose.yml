@@ -1,5 +1,6 @@
 services:
   app:
+    image: client-management-api
     build: .
     ports:
       - "8080:8080"
