@@ -36,4 +36,16 @@ public interface ClientControllerDocumentation {
     })
     ResponseEntity<List<ClientResponseDTO>> getClients();
 
+    @Operation(summary = "Get client by ID")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Client retrieved successfully."
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Client not found."
+            )
+    })
+    ResponseEntity<ClientResponseDTO> getClientById(Long id);
 }
