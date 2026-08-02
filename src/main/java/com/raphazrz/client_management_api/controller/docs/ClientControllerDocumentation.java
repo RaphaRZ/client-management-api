@@ -10,6 +10,24 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface ClientControllerDocumentation {
+    @Operation(summary = "Create a new client")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Client created successfully."
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid request data.."
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Document already registered."
+            )
+    })
+    ResponseEntity<ClientResponseDTO> createClient(ClientRequestDTO request);
 
+
+    ResponseEntity<List<ClientResponseDTO>> getClients();
 
 }
