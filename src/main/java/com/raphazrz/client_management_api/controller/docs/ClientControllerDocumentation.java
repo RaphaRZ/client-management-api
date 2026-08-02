@@ -27,7 +27,13 @@ public interface ClientControllerDocumentation {
     })
     ResponseEntity<ClientResponseDTO> createClient(ClientRequestDTO request);
 
-
+    @Operation(summary = "Get all clients")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Clients retrieved successfully."
+            )
+    })
     ResponseEntity<List<ClientResponseDTO>> getClients();
 
 }
