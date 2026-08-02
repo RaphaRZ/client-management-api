@@ -42,3 +42,6 @@ workspace.xml
 
 # Maven Wrapper (MANTER)
 !.mvn/wrapper/maven-wrapper.jar
+
+# Environment Variables
+.env
