@@ -1,6 +1,7 @@
 package com.raphazrz.client_management_api.controller.docs;
 
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
+import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
 import com.raphazrz.client_management_api.dto.response.ContactResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +20,7 @@ public interface ClientControllerDocumentation {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Invalid request data.."
+                    description = "Invalid request data."
             ),
             @ApiResponse(
                     responseCode = "409",
@@ -28,7 +29,7 @@ public interface ClientControllerDocumentation {
     })
     ResponseEntity<ClientResponseDTO> createClient(ClientRequestDTO request);
 
-    @Operation(summary = "Get all clients")
+    @Operation(summary = "Get all clients.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -70,4 +71,25 @@ public interface ClientControllerDocumentation {
             )
     })
     ResponseEntity<List<ContactResponseDTO>> getAllContactsByClientId(Long clientId);
+
+    @Operation(summary = "Update client by ID")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Client updated successfully."
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid request data."
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Client not found."
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Document already registered."
+            )
+    })
+    ResponseEntity<ClientResponseDTO> updateClientById(Long id, UpdateClientRequestDTO request);
 }
