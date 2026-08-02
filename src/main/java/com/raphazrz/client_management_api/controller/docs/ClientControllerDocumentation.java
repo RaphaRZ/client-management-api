@@ -2,8 +2,8 @@ package com.raphazrz.client_management_api.controller.docs;
 
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
+import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
-import com.raphazrz.client_management_api.dto.response.ContactResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -70,9 +70,9 @@ public interface ClientControllerDocumentation {
                     description = "Client not found."
             )
     })
-    ResponseEntity<List<ContactResponseDTO>> getAllContactsByClientId(Long clientId);
+    ResponseEntity<List<ClientContactResponseDTO>> getAllContactsByClientId(Long clientId);
 
-    @Operation(summary = "Update client by ID")
+    @Operation(summary = "Update client by ID.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -92,4 +92,21 @@ public interface ClientControllerDocumentation {
             )
     })
     ResponseEntity<ClientResponseDTO> updateClientById(Long id, UpdateClientRequestDTO request);
+
+    @Operation(summary = "Delete client by ID.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Client deleted successfully."
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid value for parameter 'id'."
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Client not found."
+            )
+    })
+    ResponseEntity<Void> deleteClientById(Long id);
 }
