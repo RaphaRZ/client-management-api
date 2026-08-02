@@ -1,5 +1,6 @@
 package com.raphazrz.client_management_api.controller;
 
+import com.raphazrz.client_management_api.controller.docs.ClientControllerDocumentation;
 import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
@@ -17,7 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/clients")
-public class ClientController {
+public class ClientController implements ClientControllerDocumentation {
     private final ClientService clientService;
 
     @PostMapping
