@@ -2,6 +2,7 @@ package com.raphazrz.client_management_api.controller.docs;
 
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientResponseDTO;
+import com.raphazrz.client_management_api.dto.response.ContactResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -48,4 +49,17 @@ public interface ClientControllerDocumentation {
             )
     })
     ResponseEntity<ClientResponseDTO> getClientById(Long id);
+
+    @Operation(summary = "Get all contacts from a client")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Contacts retrieved successfully."
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Client not found."
+            )
+    })
+    ResponseEntity<List<ContactResponseDTO>> getAllContactsByClientId(Long clientId);
 }
