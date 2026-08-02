@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface ClientControllerDocumentation {
-    @Operation(summary = "Create a new client")
+    @Operation(summary = "Create a new client.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
@@ -37,11 +37,15 @@ public interface ClientControllerDocumentation {
     })
     ResponseEntity<List<ClientResponseDTO>> getClients();
 
-    @Operation(summary = "Get client by ID")
+    @Operation(summary = "Get client by ID.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "Client retrieved successfully."
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid value for parameter 'id'."
             ),
             @ApiResponse(
                     responseCode = "404",
@@ -50,11 +54,15 @@ public interface ClientControllerDocumentation {
     })
     ResponseEntity<ClientResponseDTO> getClientById(Long id);
 
-    @Operation(summary = "Get all contacts from a client")
+    @Operation(summary = "Get all contacts from a client.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "Contacts retrieved successfully."
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid value for parameter 'id'."
             ),
             @ApiResponse(
                     responseCode = "404",
