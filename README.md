@@ -80,6 +80,46 @@ The application uses PostgreSQL.
 
 A Docker environment is provided to simplify local database setup.
 
+## Running with Docker
+
+Docker is required to run the application using containers.
+
+Make sure Docker Desktop is installed and running.
+
+Create a `.env` file in the project root with the following variables:
+
+```env
+DB_POSTGRESQL_USERNAME=postgres
+DB_POSTGRESQL_PASSWORD=your_password
+```
+These credentials will be used by Docker Compose to create and configure the PostgreSQL container automatically.
+
+Then, start the application using:
+
+```bash
+docker compose up --build
+```
+
+The application will be available at:
+
+```text
+http://localhost:8080
+```
+
+The Docker Compose configuration will automatically:
+
+- Build the Spring Boot application image.
+- Start the PostgreSQL container.
+- Create the database environment.
+- Configure communication between the application and database containers.
+- Persist PostgreSQL data using Docker volumes.
+
+To stop the containers:
+
+```bash
+docker compose down
+```
+
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for more information.
