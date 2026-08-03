@@ -1,5 +1,6 @@
 package com.raphazrz.client_management_api.controller;
 
+import com.raphazrz.client_management_api.controller.docs.ContactControllerDocumentation;
 import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
 import com.raphazrz.client_management_api.dto.request.UpdateContactRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ContactResponseDTO;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/contacts")
-public class ContactController {
+public class ContactController implements ContactControllerDocumentation {
     private final ContactService contactService;
 
     @PostMapping
