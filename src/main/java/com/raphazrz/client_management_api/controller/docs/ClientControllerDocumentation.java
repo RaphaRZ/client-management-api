@@ -16,6 +16,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
+import static com.raphazrz.client_management_api.constants.SwaggerMessageErrors.*;
+
+
 public interface ClientControllerDocumentation {
     @Operation(summary = "Create a new client.")
     @ApiResponses(value = {
@@ -25,38 +28,20 @@ public interface ClientControllerDocumentation {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Invalid request data.",
+                    description = VALIDATION_FAILED_DESCRIPTION,
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ExceptionDTO.class),
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                              "message": "Validation failed.",
-                                              "validationErrors": {
-                                                "document": "Document is required."
-                                              },
-                                              "statusCode": 400
-                                            }
-                                            """
-                            )
+                            examples = @ExampleObject(value = VALIDATION_FAILED_VALUE)
                     )
             ),
             @ApiResponse(
                     responseCode = "409",
-                    description = "Document already registered.",
+                    description = DOCUMENT_ALREADY_REGISTERED_DESCRIPTION,
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ExceptionDTO.class),
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                              "message": "Validation failed.",
-                                              "validationErrors": {},
-                                              "statusCode": 409
-                                            }
-                                            """
-                            )
+                            examples = @ExampleObject(value = DOCUMENT_ALREADY_REGISTERED_VALUE)
                     )
             )
     })
@@ -79,29 +64,21 @@ public interface ClientControllerDocumentation {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Invalid value for parameter 'id'.",
+                    description = INVALID_PARAMETER_ID_DESCRIPTION,
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ExceptionDTO.class),
-                            examples = @ExampleObject(
-                                    value = """
-                                            {
-                                              "message": "Invalid value for parameter 'id'.",
-                                              "validationErrors": {},
-                                              "statusCode": 400
-                                            }
-                                            """
-                            )
+                            examples = @ExampleObject(value = INVALID_PARAMETER_ID_VALUE)
                     )
 
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = SwaggerMessageErrors.CLIENT_NOT_FOUND_DESCRIPTION,
+                    description = CLIENT_NOT_FOUND_DESCRIPTION,
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ExceptionDTO.class),
-                            examples = @ExampleObject(value = SwaggerMessageErrors.CLIENT_NOT_FOUND_VALUE)
+                            examples = @ExampleObject(value = CLIENT_NOT_FOUND_VALUE)
                     )
             )
     })
@@ -115,28 +92,20 @@ public interface ClientControllerDocumentation {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = SwaggerMessageErrors.INVALID_PARAMETER_ID_DESCRIPTION,
+                    description = INVALID_PARAMETER_ID_DESCRIPTION,
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ExceptionDTO.class),
-                            examples = @ExampleObject(value = SwaggerMessageErrors.INVALID_PARAMETER_ID_VALUE)
+                            examples = @ExampleObject(value = INVALID_PARAMETER_ID_VALUE)
                     )
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = SwaggerMessageErrors.CLIENT_NOT_FOUND_DESCRIPTION,
+                    description = CLIENT_NOT_FOUND_DESCRIPTION,
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = ExceptionDTO.class),
-                            examples = @ExampleObject(
-                                    value = """
-                                {
-                                  "message": "Client not found.",
-                                  "validationErrors": {},
-                                  "statusCode": 404
-                                }
-                                """
-                            )
+                            examples = @ExampleObject(value = CLIENT_NOT_FOUND_VALUE)
                     )
             )
     })
@@ -150,15 +119,31 @@ public interface ClientControllerDocumentation {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Invalid request data."
+                    description = VALIDATION_FAILED_DESCRIPTION,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionDTO.class),
+                            examples = @ExampleObject(value = VALIDATION_FAILED_VALUE)
+                    )
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = SwaggerMessageErrors.CLIENT_NOT_FOUND_DESCRIPTION
+                    description = SwaggerMessageErrors.CLIENT_NOT_FOUND_DESCRIPTION,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionDTO.class),
+                            examples = @ExampleObject(value = CLIENT_NOT_FOUND_VALUE)
+                    )
+
             ),
             @ApiResponse(
                     responseCode = "409",
-                    description = "Document already registered."
+                    description = DOCUMENT_ALREADY_REGISTERED_DESCRIPTION,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionDTO.class),
+                            examples = @ExampleObject(value = DOCUMENT_ALREADY_REGISTERED_VALUE)
+    )
             )
     })
     ResponseEntity<ClientResponseDTO> updateClientById(Long id, UpdateClientRequestDTO request);
@@ -171,11 +156,21 @@ public interface ClientControllerDocumentation {
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Invalid value for parameter 'id'."
+                    description = INVALID_PARAMETER_ID_DESCRIPTION,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionDTO.class),
+                            examples = @ExampleObject(value = INVALID_PARAMETER_ID_VALUE)
+                    )
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Client not found."
+                    description = SwaggerMessageErrors.CLIENT_NOT_FOUND_DESCRIPTION,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionDTO.class),
+                            examples = @ExampleObject(value = CLIENT_NOT_FOUND_VALUE)
+                    )
             )
     })
     ResponseEntity<Void> deleteClientById(Long id);

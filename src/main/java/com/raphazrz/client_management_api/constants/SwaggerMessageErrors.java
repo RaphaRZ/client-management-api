@@ -1,8 +1,8 @@
 package com.raphazrz.client_management_api.constants;
 
 public final class SwaggerMessageErrors {
-    public static final String INVALID_REQUEST_DATA_DESCRIPTION = "Invalid request data.";
-    public static final String INVALID_REQUEST_DATA_VALUE = """
+    public static final String VALIDATION_FAILED_DESCRIPTION = "Validation failed.";
+    public static final String VALIDATION_FAILED_VALUE = """
             {
               "message": "Validation failed.",
               "validationErrors": {
