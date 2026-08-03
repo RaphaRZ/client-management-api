@@ -10,7 +10,14 @@ public final class SwaggerMessageErrors {
     }
     """;
 
-
+    public static final String CLIENT_NOT_FOUND_DESCRIPTION = "Client not found.";
+    public static final String CLIENT_NOT_FOUND_VALUE = """
+    {
+      "message": "Client not found.",
+      "validationErrors": {},
+      "statusCode": 404
+    }
+    """;
 
     private SwaggerMessageErrors() {
         throw new UnsupportedOperationException("Utility class");
