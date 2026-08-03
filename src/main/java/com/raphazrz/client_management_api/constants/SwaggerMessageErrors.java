@@ -30,6 +30,15 @@ public final class SwaggerMessageErrors {
             }
             """;
 
+    public static final String DOCUMENT_ALREADY_REGISTERED_DESCRIPTION = "Document already registered.";
+    public static final String DOCUMENT_ALREADY_REGISTERED_VALUE = """
+            {
+              "message": "Document already registered.",
+              "validationErrors": {},
+              "statusCode": 409
+            }
+            """;
+
     private SwaggerMessageErrors() {
         throw new UnsupportedOperationException("Utility class");
     }
