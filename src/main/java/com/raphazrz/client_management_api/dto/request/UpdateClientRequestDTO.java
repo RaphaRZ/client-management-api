@@ -1,17 +1,21 @@
 package com.raphazrz.client_management_api.dto.request;
 
-
 import com.raphazrz.client_management_api.constant.RegexConstants;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
+
 public record UpdateClientRequestDTO(
+        @Schema(example = "Chris")
         @NotBlank(message = "First name is required.")
         String firstName,
 
+        @Schema(example = "Redfield ")
         @NotBlank(message = "Last name is required.")
         String lastName,
 
+        @Schema(example = "00000012345")
         @NotBlank(message = "Document is required.")
         @Pattern(
                 regexp = RegexConstants.DOCUMENT_REGEX + "|" + RegexConstants.FORMATTED_DOCUMENT_REGEX,
