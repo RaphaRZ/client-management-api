@@ -12,7 +12,7 @@ public record ClientResponseDTO(
         @Schema(example = "Wesker")
         String lastName,
 
-        @Schema(example = "00123456789")
+        @Schema(example = "000.000.000-01")
         String document,
 
         List<ClientContactResponseDTO> contacts) {
