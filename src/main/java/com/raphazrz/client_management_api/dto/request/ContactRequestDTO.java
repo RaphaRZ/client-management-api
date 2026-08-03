@@ -10,7 +10,7 @@ public record ContactRequestDTO(
         @NotNull(message = "Contact type is required.")
         Integer contactType,
 
-        @Schema(example = "41999999999")
+        @Schema(example = "41000000001")
         @NotBlank(message = "Contact is required.")
         String contact,
 

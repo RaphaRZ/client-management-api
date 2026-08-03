@@ -15,7 +15,7 @@ public record UpdateClientRequestDTO(
         @NotBlank(message = "Last name is required.")
         String lastName,
 
-        @Schema(example = "00000012345")
+        @Schema(example = "000.000.000-01")
         @NotBlank(message = "Document is required.")
         @Pattern(
                 regexp = RegexConstants.DOCUMENT_REGEX + "|" + RegexConstants.FORMATTED_DOCUMENT_REGEX,
