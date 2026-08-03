@@ -43,4 +43,21 @@ public interface ContactControllerDocumentation {
             )
     })
     ResponseEntity<ContactResponseDTO> updateContact(Long id, UpdateContactRequestDTO request);
+
+    @Operation(summary = "Delete contact by ID.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Contact deleted successfully."
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid value for parameter 'id'."
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Contact not found."
+            )
+    })
+    ResponseEntity<Void> deleteContact(Long id);
 }
