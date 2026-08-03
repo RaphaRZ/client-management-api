@@ -30,6 +30,15 @@ public final class SwaggerMessageErrors {
             }
             """;
 
+    private static final String CONTACT_NOT_FOUND_DESCRIPTION = "Contact not found.";
+    public static final String CONTACT_NOT_FOUND_VALUE = """
+            {
+                "message": "Client not found.",
+                    "validationErrors": {},
+                "statusCode": 404
+            }
+            """;
+
     public static final String DOCUMENT_ALREADY_REGISTERED_DESCRIPTION = "Document already registered.";
     public static final String DOCUMENT_ALREADY_REGISTERED_VALUE = """
             {
