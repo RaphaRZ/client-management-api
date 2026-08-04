@@ -255,6 +255,13 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         );
     }
 
+    private ResultActions performPostContact(ContactRequestDTO request) throws Exception {
+        return mockMvc.perform(
+                post(BASE_CONTACTS_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)));
+    }
+
     private ResultActions performGetClients() throws Exception {
         return mockMvc.perform(get(BASE_CLIENTS_URL));
     }
@@ -263,10 +270,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         return mockMvc.perform(get(BASE_CLIENTS_URL + "/{id}", id));
     }
 
-    private ResultActions performPostContact(ContactRequestDTO request) throws Exception {
-        return mockMvc.perform(
-                post(BASE_CONTACTS_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)));
+    private ResultActions performGetAllContactsByClientId(Long id) throws Exception {
+        return mockMvc.perform(get(BASE_CONTACTS_URL + "/{id}/contacts", id));
     }
 }
