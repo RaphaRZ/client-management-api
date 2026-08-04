@@ -157,6 +157,33 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
 
     @Transactional
     @Test
+    @DisplayName("Should return status 200 OK and retrieve a persisted client by ID.")
+    void shouldReturnStatus200OkAndRetrievePersistedClientById() throws Exception {
+        // Arrange - Persist client
+        ClientRequestDTO persistClientRequest = createClientRequestDTO();
+        performPostClient(persistClientRequest)
+                .andExpect(status().isCreated());
+
+        Client persistedClient = clientRepository.findAll().getFirst();
+
+        // Act & Assert - HTTP response
+        performGetClientById(persistedClient.getId())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value(persistClientRequest.firstName()))
+                .andExpect(jsonPath("$.lastName").value(persistClientRequest.lastName()))
+                .andExpect(jsonPath("$.document").value(persistClientRequest.document()))
+                .andExpect(jsonPath("$.contacts").isEmpty());
+
+        // Assert - Database state
+        assertEquals(1, clientRepository.count());
+        assertEquals(persistClientRequest.firstName(), persistedClient.getFirstName());
+        assertEquals(persistClientRequest.lastName(), persistedClient.getLastName());
+        assertEquals(persistClientRequest.document(), persistedClient.getDocument());
+        assertTrue(persistedClient.getContacts().isEmpty());
+    }
+
+    @Transactional
+    @Test
     @DisplayName("Should return status 404 Not Found when retrieving a client with a non-existent ID.")
     void shouldReturnStatus404NotFoundWhenRetrievingClientWithNonExistentId() throws Exception {
         // Arrange
@@ -186,6 +213,6 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     }
 
     private ResultActions performGetClientById(Long id) throws Exception {
-        return mockMvc.perform(get(BASE_URL + "{id}", id));
+        return mockMvc.perform(get(BASE_URL + "/{id}", id));
     }
 }
