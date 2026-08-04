@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 public class ClientControllerIntegrationTest extends BaseIntegrationTest {
-    private static final String URL = "/clients";
+    private static final String BASE_URL = "/clients";
 
     @Autowired
     private ClientRepository clientRepository;
@@ -42,7 +42,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
 
         // Act & Assert - HTTP response
         mockMvc.perform(
-                        post(URL)
+                        post(BASE_URL)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -61,5 +61,31 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(request.lastName(), persistedClient.getLastName());
         assertEquals(request.document(), persistedClient.getDocument());
         assertTrue(persistedClient.getContacts().isEmpty());
+    }
+
+    @Transactional
+    @Test
+    @DisplayName("Should return status 400 Bad Request when creating a client with invalid request data.")
+    void shouldReturnStatus400BadRequestWhenCreatingClientWithInvalidRequestData() throws Exception {
+        // Arrange
+        ClientRequestDTO request = new ClientRequestDTO(
+                "",
+                "Client",
+                "123"
+        );
+
+        // Act & Assert - HTTP response
+        mockMvc.perform(
+                        post(BASE_URL)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(jsonPath("$.message").value("Validation failed."))
+                .andExpect(jsonPath("$.statusCode").value(400))
+                .andExpect(jsonPath("$.validationErrors.firstName").exists());
+
+        // Assert - Database state
+        List<Client> clients = clientRepository.findAll();
+        assertTrue(clients.isEmpty());
     }
 }
