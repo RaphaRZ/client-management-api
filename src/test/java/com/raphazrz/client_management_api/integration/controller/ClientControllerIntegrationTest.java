@@ -6,6 +6,7 @@ import com.raphazrz.client_management_api.enumerator.ContactType;
 import com.raphazrz.client_management_api.integration.base.BaseIntegrationTest;
 import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.repository.ClientRepository;
+import com.raphazrz.client_management_api.repository.ContactRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,9 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private ContactRepository contactRepository;
+
     @BeforeEach
     void setUp() {
         clientRepository.deleteAll();
@@ -41,7 +45,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @Transactional
     @Test
     @DisplayName("Should create a client and persist it into the database.")
-    void shouldCreateClientSuccessfully() throws Exception {
+    void createClientCreated() throws Exception {
         // Arrange
         ClientRequestDTO request = createClientRequestDTO();
 
@@ -67,7 +71,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @Transactional
     @Test
     @DisplayName("Should return status 400 Bad Request when creating a client with invalid request data.")
-    void shouldReturnStatus400BadRequestWhenCreatingClientWithInvalidRequestData() throws Exception {
+    void createClientBadRequest() throws Exception {
         // Arrange
         ClientRequestDTO request = new ClientRequestDTO(
                 "",
@@ -89,7 +93,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @Transactional
     @Test
     @DisplayName("Should return status 409 Conflict when creating a client with an already registered document.")
-    void shouldReturnStatus409ConflictWhenCreatingClientWithAlreadyRegisteredDocument() throws Exception {
+    void createClientDuplicateDocumentException() throws Exception {
         // Arrange - Persist an existing client
         ClientRequestDTO firstRequest = new ClientRequestDTO(
                 "First",
@@ -130,7 +134,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @Transactional
     @Test
     @DisplayName("Should return status 200 OK and retrieve all persisted clients.")
-    void shouldReturnStatus200OkAndRetrieveAllPersistedClients() throws Exception {
+    void getClientsOk() throws Exception {
         // Arrange - Persist first client
         ClientRequestDTO firstRequest = createClientRequestDTO();
         performPostClient(firstRequest)
@@ -161,7 +165,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @Transactional
     @Test
     @DisplayName("Should return status 200 OK and retrieve a persisted client by ID.")
-    void shouldReturnStatus200OkAndRetrievePersistedClientById() throws Exception {
+    void getClientByIdOk() throws Exception {
         // Arrange - Persist client
         ClientRequestDTO persistClientRequest = createClientRequestDTO();
         performPostClient(persistClientRequest)
@@ -188,7 +192,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @Transactional
     @Test
     @DisplayName("Should return status 404 Not Found when retrieving a client with a non-existent ID.")
-    void shouldReturnStatus404NotFoundWhenRetrievingClientWithNonExistentId() throws Exception {
+    void getClientByIdClientNotFoundException() throws Exception {
         // Arrange
         Long nonExistentId = 1L;
 
@@ -206,7 +210,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @Transactional
     @Test
     @DisplayName("Should return status 200 OK and retrieve all contacts from a persisted client.")
-    void shouldReturnStatus200OkAndRetrieveAllContactsFromPersistedClient() throws Exception {
+    void getAllContactsByClientIdOk() throws Exception {
         // Arrange - Persist client
         ClientRequestDTO clientRequest = createClientRequestDTO();
         performPostClient(clientRequest)
