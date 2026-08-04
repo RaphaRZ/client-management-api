@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.raphazrz.client_management_api.enumerator.ContactType.fromType;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createClientRequestDTO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -68,7 +69,6 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertTrue(persistedClient.getContacts().isEmpty());
     }
 
-    @Transactional
     @Test
     @DisplayName("Should return status 400 Bad Request when creating a client with invalid request data.")
     void createClientBadRequest() throws Exception {
@@ -131,7 +131,6 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertTrue(persistedClient.getContacts().isEmpty());
     }
 
-    @Transactional
     @Test
     @DisplayName("Should return status 200 OK and retrieve all persisted clients.")
     void getClientsOk() throws Exception {
@@ -189,7 +188,6 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertTrue(persistedClient.getContacts().isEmpty());
     }
 
-    @Transactional
     @Test
     @DisplayName("Should return status 404 Not Found when retrieving a client with a non-existent ID.")
     void getClientByIdClientNotFoundException() throws Exception {
@@ -207,7 +205,6 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertTrue(clientRepository.findAll().isEmpty());
     }
 
-    @Transactional
     @Test
     @DisplayName("Should return status 200 OK and retrieve all contacts from a persisted client.")
     void getAllContactsByClientIdOk() throws Exception {
@@ -224,7 +221,6 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
                 "41999999999",
                 persistedClient.getId()
         );
-
         performPostContact(firstContactRequest)
                 .andExpect(status().isCreated());
 
@@ -234,7 +230,6 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
                 "john.doe@email.com",
                 persistedClient.getId()
         );
-
         performPostContact(secondContactRequest)
                 .andExpect(status().isCreated());
 
@@ -242,13 +237,31 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         performGetAllContactsByClientId(persistedClient.getId())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].contactType").value(firstContactRequest.contactType()))
+                .andExpect(jsonPath("$[0].contactType").value(fromType(firstContactRequest.contactType()).name()))
                 .andExpect(jsonPath("$[0].contact").value(firstContactRequest.contact()))
-                .andExpect(jsonPath("$[1].contactType").value(secondContactRequest.contactType()))
+                .andExpect(jsonPath("$[1].contactType").value(fromType(secondContactRequest.contactType()).name()))
                 .andExpect(jsonPath("$[1].contact").value(secondContactRequest.contact()));
 
         // Assert - Database state
         assertEquals(2, contactRepository.count());
+    }
+
+    @Test
+    @DisplayName("Should return status 404 Not Found when retrieving contacts from a non-existent client.")
+    void getAllContactsByClientIdClientNotFound() throws Exception {
+        // Arrange
+        Long nonExistentId = 1L;
+
+        // Act & Assert - HTTP response
+        performGetAllContactsByClientId(nonExistentId)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Client not found."))
+                .andExpect(jsonPath("$.validationErrors").isEmpty())
+                .andExpect(jsonPath("$.statusCode").value(404));
+
+        // Assert - Database state
+        assertTrue(clientRepository.findAll().isEmpty());
+        assertEquals(0, contactRepository.count());
     }
 
     private ResultActions performPostClient(ClientRequestDTO request) throws Exception {
@@ -275,6 +288,6 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     }
 
     private ResultActions performGetAllContactsByClientId(Long id) throws Exception {
-        return mockMvc.perform(get(BASE_CONTACTS_URL + "/{id}/contacts", id));
+        return mockMvc.perform(get(BASE_CLIENTS_URL + "/{id}/contacts", id));
     }
 }

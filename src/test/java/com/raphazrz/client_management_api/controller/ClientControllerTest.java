@@ -98,7 +98,7 @@ class ClientControllerTest {
 
     @Test
     @DisplayName("Should return status 409 Conflict.")
-    void createClientDuplicateDocumentException() throws Exception {
+    void createClientDuplicateDocument() throws Exception {
         // Arrange
         ClientRequestDTO request = createClientRequestDTO();
         when(clientService.createClient(request)).thenThrow(new DuplicateDocumentException());
@@ -162,7 +162,7 @@ class ClientControllerTest {
 
     @Test
     @DisplayName("Should return status 404 Not Found.")
-    void getClientByIdClientNotFoundException() throws Exception {
+    void getClientByIdClientNotFound() throws Exception {
         // Arrange
         Long id = 1L;
         when(clientService.getClientById(id)).thenThrow(new ClientNotFoundException());
@@ -200,7 +200,7 @@ class ClientControllerTest {
 
     @Test
     @DisplayName("Should return status 404 Not Found.")
-    void getAllContactsByClientIdClientNotFoundException() throws Exception {
+    void getAllContactsByClientIdClientNotFound() throws Exception {
         // Arrange
         Long id = 1L;
 
@@ -260,7 +260,7 @@ class ClientControllerTest {
 
     @Test
     @DisplayName("Should return status 409 Conflict.")
-    void updateClientByIdDuplicateDocumentException() throws Exception {
+    void updateClientByIdDuplicateDocument() throws Exception {
         // Arrange
         Long id = 1L;
         UpdateClientRequestDTO request = createUpdateClientRequestDTO();
