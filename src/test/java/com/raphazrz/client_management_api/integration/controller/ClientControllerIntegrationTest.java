@@ -163,7 +163,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         Long nonExistentId = 1L;
 
         // Act & Assert - HTTP response
-        mockMvc.perform(get(BASE_URL + "/{id}", nonExistentId))
+        performGetClientById(nonExistentId)
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Client not found."))
                 .andExpect(jsonPath("$.validationErrors").isEmpty())
@@ -183,5 +183,9 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
 
     private ResultActions performGetClients() throws Exception {
         return mockMvc.perform(get(BASE_URL));
+    }
+
+    private ResultActions performGetClientById(Long id) throws Exception {
+        return mockMvc.perform(get(BASE_URL + "{id}", id));
     }
 }
