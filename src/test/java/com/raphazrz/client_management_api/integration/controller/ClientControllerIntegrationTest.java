@@ -139,7 +139,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(status().isCreated());
 
         // Act & Assert - HTTP response
-        mockMvc.perform(get(BASE_URL))
+        performGetClients()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].firstName").value(firstRequest.firstName()))
@@ -161,5 +161,9 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
         );
+    }
+
+    private ResultActions performGetClients() throws Exception {
+        return mockMvc.perform(get(BASE_URL));
     }
 }
