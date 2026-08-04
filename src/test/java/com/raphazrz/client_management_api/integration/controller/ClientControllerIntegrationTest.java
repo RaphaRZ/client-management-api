@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -42,11 +43,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         ClientRequestDTO request = createClientRequestDTO();
 
         // Act & Assert - HTTP response
-        mockMvc.perform(
-                        post(BASE_URL)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(request))
-                )
+        performPostClient(request)
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.firstName").value(request.firstName()))
                 .andExpect(jsonPath("$.lastName").value(request.lastName()))
@@ -76,11 +73,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         );
 
         // Act & Assert - HTTP response
-        mockMvc.perform(
-                        post(BASE_URL)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(request))
-                )
+        performPostClient(request)
                 .andExpect(jsonPath("$.message").value("Validation failed."))
                 .andExpect(jsonPath("$.validationErrors.firstName").exists())
                 .andExpect(jsonPath("$.statusCode").value(400));
@@ -101,12 +94,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
                 "00123456789"
         );
 
-
-        mockMvc.perform(
-                        post(BASE_URL)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(firstRequest))
-                )
+        performPostClient(firstRequest)
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.document").value(firstRequest.document()));
 
@@ -119,11 +107,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         );
 
         // Act & Assert - HTTP response
-        mockMvc.perform(
-                        post(BASE_URL)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(secondRequest))
-                )
+        performPostClient(secondRequest)
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("Document already registered."))
                 .andExpect(jsonPath("$.validationErrors").isEmpty())
@@ -146,22 +130,12 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     void shouldReturnStatus200OkAndRetrieveAllPersistedClients() throws Exception {
         // Arrange - Persist first client
         ClientRequestDTO firstRequest = createClientRequestDTO();
-
-        mockMvc.perform(
-                        post(BASE_URL)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(firstRequest))
-                )
+        performPostClient(firstRequest)
                 .andExpect(status().isCreated());
 
         // Arrange - Persist second client
         ClientRequestDTO secondRequest = createClientRequestDTO();
-
-        mockMvc.perform(
-                        post(BASE_URL)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(secondRequest))
-                )
+        performPostClient(secondRequest)
                 .andExpect(status().isCreated());
 
         // Act & Assert - HTTP response
@@ -179,5 +153,13 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
 
         // Assert - Database state
         assertEquals(2, clientRepository.count());
+    }
+
+    private ResultActions performPostClient(ClientRequestDTO request) throws Exception {
+        return mockMvc.perform(
+                post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+        );
     }
 }
