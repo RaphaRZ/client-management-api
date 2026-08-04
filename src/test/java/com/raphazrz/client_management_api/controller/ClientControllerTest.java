@@ -39,6 +39,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ClientController.class)
 class ClientControllerTest {
+    private static final String BASE_URL = "/clients";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -60,7 +62,7 @@ class ClientControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                        post("/clients")
+                        post(BASE_URL)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -85,7 +87,7 @@ class ClientControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                        post("/clients")
+                        post(BASE_URL)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -103,7 +105,7 @@ class ClientControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                        post("/clients")
+                        post(BASE_URL)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -124,7 +126,7 @@ class ClientControllerTest {
         when(clientService.getClients()).thenReturn(expectedResponse);
 
         // Act & Assert
-        mockMvc.perform(get("/clients"))
+        mockMvc.perform(get(BASE_URL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(expectedResponse.size()))
                 .andExpect(jsonPath("$[0].firstName").value(expectedResponse.getFirst().firstName()))
@@ -149,7 +151,7 @@ class ClientControllerTest {
         when(clientService.getClientById(id)).thenReturn(expectedResponse);
 
         // Act & Assert
-        mockMvc.perform(get("/clients/{id}", id))
+        mockMvc.perform(get(BASE_URL + "/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value(expectedResponse.firstName()))
                 .andExpect(jsonPath("$.lastName").value(expectedResponse.lastName()))
@@ -166,7 +168,7 @@ class ClientControllerTest {
         when(clientService.getClientById(id)).thenThrow(new ClientNotFoundException());
 
         // Act & Assert
-        mockMvc.perform(get("/clients/{id}", id))
+        mockMvc.perform(get(BASE_URL + "/{id}", id))
                 .andExpect(status().isNotFound());
 
         verify(clientService).getClientById(id);
@@ -185,7 +187,7 @@ class ClientControllerTest {
         when(clientService.getAllContactsByClientId(id)).thenReturn(expectedResponse);
 
         // Act & Assert
-        mockMvc.perform(get("/clients/{id}/contacts", id))
+        mockMvc.perform(get(BASE_URL + "/{id}/contacts", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(expectedResponse.size()))
                 .andExpect(jsonPath("$[0].contactType").value(expectedResponse.getFirst().contactType().name()))
@@ -205,7 +207,7 @@ class ClientControllerTest {
         when(clientService.getAllContactsByClientId(id)).thenThrow(new ClientNotFoundException());
 
         // Act & Assert
-        mockMvc.perform(get("/clients/{id}/contacts", id))
+        mockMvc.perform(get(BASE_URL + "/{id}/contacts", id))
                 .andExpect(status().isNotFound());
 
         verify(clientService).getAllContactsByClientId(id);
@@ -222,7 +224,7 @@ class ClientControllerTest {
         when(clientService.updateClientById(id, request)).thenReturn(expectedResponse);
 
         // Act & Assert
-        mockMvc.perform(put("/clients/{id}", id)
+        mockMvc.perform(put(BASE_URL + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -247,7 +249,7 @@ class ClientControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                        put("/clients/{id}", id)
+                        put(BASE_URL + "/{id}", id)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -268,7 +270,7 @@ class ClientControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                        put("/clients/{id}", id)
+                        put(BASE_URL + "/{id}", id)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -286,7 +288,7 @@ class ClientControllerTest {
         doNothing().when(clientService).deleteClientById(id);
 
         // Act & Assert
-        mockMvc.perform(delete("/clients/{id}", id))
+        mockMvc.perform(delete(BASE_URL + "/{id}", id))
                 .andExpect(status().isNoContent());
 
         verify(clientService).deleteClientById(id);
@@ -303,7 +305,7 @@ class ClientControllerTest {
                 .deleteClientById(id);
 
         // Act & Assert
-        mockMvc.perform(delete("/clients/{id}", id))
+        mockMvc.perform(delete(BASE_URL + "/{id}", id))
                 .andExpect(status().isNotFound());
 
         verify(clientService).deleteClientById(id);
