@@ -155,6 +155,24 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(2, clientRepository.count());
     }
 
+    @Transactional
+    @Test
+    @DisplayName("Should return status 404 Not Found when retrieving a client with a non-existent ID.")
+    void shouldReturnStatus404NotFoundWhenRetrievingClientWithNonExistentId() throws Exception {
+        // Arrange
+        Long nonExistentId = 1L;
+
+        // Act & Assert - HTTP response
+        mockMvc.perform(get(BASE_URL + "/{id}", nonExistentId))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Client not found."))
+                .andExpect(jsonPath("$.validationErrors").isEmpty())
+                .andExpect(jsonPath("$.statusCode").value(404));
+
+        // Assert - Database state
+        assertTrue(clientRepository.findAll().isEmpty());
+    }
+
     private ResultActions performPostClient(ClientRequestDTO request) throws Exception {
         return mockMvc.perform(
                 post(BASE_URL)
