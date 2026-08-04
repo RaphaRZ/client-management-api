@@ -71,7 +71,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         ClientRequestDTO request = new ClientRequestDTO(
                 "",
                 "Client",
-                "123"
+                "00123456789"
         );
 
         // Act & Assert - HTTP response
@@ -81,11 +81,60 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
                                 .content(objectMapper.writeValueAsString(request))
                 )
                 .andExpect(jsonPath("$.message").value("Validation failed."))
-                .andExpect(jsonPath("$.statusCode").value(400))
-                .andExpect(jsonPath("$.validationErrors.firstName").exists());
+                .andExpect(jsonPath("$.validationErrors.firstName").exists())
+                .andExpect(jsonPath("$.statusCode").value(400));
 
         // Assert - Database state
         List<Client> clients = clientRepository.findAll();
         assertTrue(clients.isEmpty());
+    }
+
+    @Transactional
+    @Test
+    @DisplayName("Should return status 409 Conflict when creating a client with an already registered document.")
+    void shouldReturnStatus409ConflictWhenCreatingClientWithAlreadyRegisteredDocument() throws Exception {
+        // Arrange - Persist an existing client
+        ClientRequestDTO firstRequest = new ClientRequestDTO(
+                "First",
+                "Client",
+                "00123456789"
+        );
+
+
+        mockMvc.perform(
+                        post(BASE_URL)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(firstRequest))
+                )
+                .andExpect(status().isCreated());
+
+
+        // Arrange
+        ClientRequestDTO secondRequest = new ClientRequestDTO(
+                "Second",
+                "Client",
+                "00123456789"
+        );
+
+        // Act & Assert - HTTP response
+        mockMvc.perform(
+                        post(BASE_URL)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(secondRequest))
+                )
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Document already registered."))
+                .andExpect(jsonPath("$.validationErrors").isEmpty())
+                .andExpect(jsonPath("$.statusCode").value(409));
+
+        // Assert - Database state
+        List<Client> clients = clientRepository.findAll();
+        assertEquals(1, clients.size());
+
+        Client persistedClient = clients.getFirst();
+        assertEquals(firstRequest.firstName(), persistedClient.getFirstName());
+        assertEquals(firstRequest.lastName(), persistedClient.getLastName());
+        assertEquals(firstRequest.document(), persistedClient.getDocument());
+        assertTrue(persistedClient.getContacts().isEmpty());
     }
 }
