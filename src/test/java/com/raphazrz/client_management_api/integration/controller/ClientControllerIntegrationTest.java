@@ -1,6 +1,8 @@
 package com.raphazrz.client_management_api.integration.controller;
 
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
+import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
+import com.raphazrz.client_management_api.enumerator.ContactType;
 import com.raphazrz.client_management_api.integration.base.BaseIntegrationTest;
 import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.repository.ClientRepository;
@@ -198,6 +200,51 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
 
         // Assert - Database state
         assertTrue(clientRepository.findAll().isEmpty());
+    }
+
+    @Transactional
+    @Test
+    @DisplayName("Should return status 200 OK and retrieve all contacts from a persisted client.")
+    void shouldReturnStatus200OkAndRetrieveAllContactsFromPersistedClient() throws Exception {
+        // Arrange - Persist client
+        ClientRequestDTO clientRequest = createClientRequestDTO();
+
+        performPostClient(clientRequest)
+                .andExpect(status().isCreated());
+
+        Client persistedClient = clientRepository.findAll().getFirst();
+
+        // Arrange - Persist first contact
+        ContactRequestDTO firstContactRequest = new ContactRequestDTO(
+                ContactType.PHONE.getType(),
+                "41999999999",
+                persistedClient.getId()
+        );
+
+        performPostContact(firstContactRequest)
+                .andExpect(status().isCreated());
+
+        // Arrange - Persist second contact
+        ContactRequestDTO secondContactRequest = new ContactRequestDTO(
+                ContactType.EMAIL.getType(),
+                "john.doe@email.com",
+                persistedClient.getId()
+        );
+
+        performPostContact(secondContactRequest)
+                .andExpect(status().isCreated());
+
+        // Act & Assert - HTTP response
+        performGetAllContactsByClientId(persistedClient.getId())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].contactType").value(firstContactRequest.contactType()))
+                .andExpect(jsonPath("$[0].contact").value(firstContactRequest.contact()))
+                .andExpect(jsonPath("$[1].contactType").value(secondContactRequest.contactType()))
+                .andExpect(jsonPath("$[1].contact").value(secondContactRequest.contact()));
+
+        // Assert - Database state
+        assertEquals(2, contactRepository.count());
     }
 
     private ResultActions performPostClient(ClientRequestDTO request) throws Exception {
