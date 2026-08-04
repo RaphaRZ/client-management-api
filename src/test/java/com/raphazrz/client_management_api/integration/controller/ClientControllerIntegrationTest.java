@@ -17,6 +17,7 @@ import static com.raphazrz.client_management_api.util.TestDataFactory.createClie
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -106,14 +107,15 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(firstRequest))
                 )
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.document").value(firstRequest.document()));
 
 
         // Arrange
         ClientRequestDTO secondRequest = new ClientRequestDTO(
                 "Second",
                 "Client",
-                "00123456789"
+                firstRequest.document()
         );
 
         // Act & Assert - HTTP response
@@ -136,5 +138,46 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(firstRequest.lastName(), persistedClient.getLastName());
         assertEquals(firstRequest.document(), persistedClient.getDocument());
         assertTrue(persistedClient.getContacts().isEmpty());
+    }
+
+    @Transactional
+    @Test
+    @DisplayName("Should return status 200 OK and retrieve all persisted clients.")
+    void shouldReturnStatus200OkAndRetrieveAllPersistedClients() throws Exception {
+        // Arrange - Persist first client
+        ClientRequestDTO firstRequest = createClientRequestDTO();
+
+        mockMvc.perform(
+                        post(BASE_URL)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(firstRequest))
+                )
+                .andExpect(status().isCreated());
+
+        // Arrange - Persist second client
+        ClientRequestDTO secondRequest = createClientRequestDTO();
+
+        mockMvc.perform(
+                        post(BASE_URL)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(secondRequest))
+                )
+                .andExpect(status().isCreated());
+
+        // Act & Assert - HTTP response
+        mockMvc.perform(get(BASE_URL))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].firstName").value(firstRequest.firstName()))
+                .andExpect(jsonPath("$[0].lastName").value(firstRequest.lastName()))
+                .andExpect(jsonPath("$[0].document").value(firstRequest.document()))
+                .andExpect(jsonPath("$[0].contacts").isEmpty())
+                .andExpect(jsonPath("$[1].firstName").value(secondRequest.firstName()))
+                .andExpect(jsonPath("$[1].lastName").value(secondRequest.lastName()))
+                .andExpect(jsonPath("$[1].document").value(secondRequest.document()))
+                .andExpect(jsonPath("$[1].contacts").isEmpty());
+
+        // Assert - Database state
+        assertEquals(2, clientRepository.count());
     }
 }
