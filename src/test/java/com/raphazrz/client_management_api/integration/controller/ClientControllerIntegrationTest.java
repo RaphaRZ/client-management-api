@@ -26,7 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 public class ClientControllerIntegrationTest extends BaseIntegrationTest {
-    private static final String BASE_URL = "/clients";
+    private static final String BASE_CLIENTS_URL = "/clients";
+    private static final String BASE_CONTACTS_URL = "/contacts";
 
     @Autowired
     private ClientRepository clientRepository;
@@ -208,7 +209,6 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     void shouldReturnStatus200OkAndRetrieveAllContactsFromPersistedClient() throws Exception {
         // Arrange - Persist client
         ClientRequestDTO clientRequest = createClientRequestDTO();
-
         performPostClient(clientRequest)
                 .andExpect(status().isCreated());
 
@@ -249,17 +249,24 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
 
     private ResultActions performPostClient(ClientRequestDTO request) throws Exception {
         return mockMvc.perform(
-                post(BASE_URL)
+                post(BASE_CLIENTS_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
         );
     }
 
     private ResultActions performGetClients() throws Exception {
-        return mockMvc.perform(get(BASE_URL));
+        return mockMvc.perform(get(BASE_CLIENTS_URL));
     }
 
     private ResultActions performGetClientById(Long id) throws Exception {
-        return mockMvc.perform(get(BASE_URL + "/{id}", id));
+        return mockMvc.perform(get(BASE_CLIENTS_URL + "/{id}", id));
+    }
+
+    private ResultActions performPostContact(ContactRequestDTO request) throws Exception {
+        return mockMvc.perform(
+                post(BASE_CONTACTS_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)));
     }
 }
