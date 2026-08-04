@@ -11,6 +11,7 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @Testcontainers
@@ -18,7 +19,10 @@ public abstract class BaseIntegrationTest {
 
     @Container
     protected static final PostgreSQLContainer postgres =
-            new PostgreSQLContainer("postgres:18");
+            new PostgreSQLContainer("postgres:18")
+                    .withDatabaseName("client_manager")
+                    .withUsername("postgres")
+                    .withPassword("postgres");
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
