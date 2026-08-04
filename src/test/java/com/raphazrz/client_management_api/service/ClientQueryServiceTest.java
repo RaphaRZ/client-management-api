@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,14 +35,14 @@ public class ClientQueryServiceTest {
     void findAllClientsSuccess() {
         // Arrange
         List<Client> clients = List.of(createClient(), createClient());
-        when(clientRepository.findAll()).thenReturn(clients);
+        when(clientRepository.findAll(Sort.by("id"))).thenReturn(clients);
 
         // Act
         List<Client> result = clientQueryService.findAllClients();
 
         // Assert
         assertEquals(clients, result);
-        verify(clientRepository).findAll();
+        verify(clientRepository).findAll(Sort.by("id"));
     }
 
     @Test
