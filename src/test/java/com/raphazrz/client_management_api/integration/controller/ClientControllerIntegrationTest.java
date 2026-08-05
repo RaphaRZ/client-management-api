@@ -57,6 +57,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         // Act & Assert - HTTP response
         performPostClient(request)
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.firstName").value(request.firstName()))
                 .andExpect(jsonPath("$.lastName").value(request.lastName()))
                 .andExpect(jsonPath("$.document").value(request.document()))
@@ -137,10 +138,12 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         performGetClients()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").isNumber())
                 .andExpect(jsonPath("$[0].firstName").value(firstRequest.firstName()))
                 .andExpect(jsonPath("$[0].lastName").value(firstRequest.lastName()))
                 .andExpect(jsonPath("$[0].document").value(firstRequest.document()))
                 .andExpect(jsonPath("$[0].contacts").isEmpty())
+                .andExpect(jsonPath("$[1].id").isNumber())
                 .andExpect(jsonPath("$[1].firstName").value(secondRequest.firstName()))
                 .andExpect(jsonPath("$[1].lastName").value(secondRequest.lastName()))
                 .andExpect(jsonPath("$[1].document").value(secondRequest.document()))
@@ -161,6 +164,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         // Act & Assert - HTTP response
         performGetClientById(persistedClient.getId())
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.firstName").value(persistClientRequest.firstName()))
                 .andExpect(jsonPath("$.lastName").value(persistClientRequest.lastName()))
                 .andExpect(jsonPath("$.document").value(persistClientRequest.document()))
@@ -214,8 +218,10 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         performGetAllContactsByClientId(persistedClient.getId())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").isNumber())
                 .andExpect(jsonPath("$[0].contactType").value(fromType(firstContactRequest.contactType()).name()))
                 .andExpect(jsonPath("$[0].contact").value(firstContactRequest.contact()))
+                .andExpect(jsonPath("$[1].id").isNumber())
                 .andExpect(jsonPath("$[1].contactType").value(fromType(secondContactRequest.contactType()).name()))
                 .andExpect(jsonPath("$[1].contact").value(secondContactRequest.contact()));
 
@@ -255,6 +261,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         // Act & Assert - HTTP response
         performPutClientById(persistedClient.getId(), request)
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.firstName").value(request.firstName()))
                 .andExpect(jsonPath("$.lastName").value(request.lastName()))
                 .andExpect(jsonPath("$.document").value(request.document()))
