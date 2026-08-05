@@ -6,9 +6,11 @@ import com.raphazrz.client_management_api.dto.response.ContactResponseDTO;
 import com.raphazrz.client_management_api.enumerator.ContactType;
 import com.raphazrz.client_management_api.model.Contact;
 
+
 public class ContactMapper {
     public static ContactResponseDTO toResponseDTO(Contact contact) {
         return new ContactResponseDTO(
+                contact.getId(),
                 contact.getContactType(),
                 contact.getContact(),
                 contact.getClientId()
