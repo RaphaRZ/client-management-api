@@ -5,6 +5,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 
 public record ContactResponseDTO(
+        @Schema(example = "1")
+        Long id,
+
         @Schema(example = "PHONE")
         ContactType contactType,
 
