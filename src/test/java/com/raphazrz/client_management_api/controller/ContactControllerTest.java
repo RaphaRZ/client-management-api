@@ -4,6 +4,7 @@ import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
 import com.raphazrz.client_management_api.dto.request.UpdateContactRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ContactResponseDTO;
 import com.raphazrz.client_management_api.exception.ClientNotFoundException;
+import com.raphazrz.client_management_api.exception.ContactNotFoundException;
 import com.raphazrz.client_management_api.service.ContactService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -157,13 +158,13 @@ public class ContactControllerTest {
 
     @Test
     @DisplayName("Should return status 404 Not Found.")
-    void updateContactByIdClientNotFoundException() throws Exception {
+    void updateContactByIdContactNotFoundException() throws Exception {
         // Arrange
         Long id = 1L;
         UpdateContactRequestDTO request = createUpdateContactRequestDTO();
 
         when(contactService.updateContactById(id, request))
-                .thenThrow(new ClientNotFoundException());
+                .thenThrow(new ContactNotFoundException());
 
         // Act & Assert
         mockMvc.perform(

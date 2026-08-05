@@ -189,4 +189,22 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals("41000000001", persistedContactAfterUpdate.getContact());
         assertEquals(persistedClient.getId(), persistedContactAfterUpdate.getClientId());
     }
+
+    @Test
+    @DisplayName("Should return status 404 Not Found when updating a contact with a non-existent ID.")
+    void updateContactByIdContactNotFound() throws Exception {
+        // Arrange
+        Long nonExistentId = 1L;
+        UpdateContactRequestDTO request = createUpdateContactRequestDTO();
+
+        // Act & Assert - HTTP response
+        performPutContactById(nonExistentId, request)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Contact not found."))
+                .andExpect(jsonPath("$.validationErrors").isEmpty())
+                .andExpect(jsonPath("$.statusCode").value(404));
+
+        // Assert - Database state
+        assertTrue(contactRepository.findAll().isEmpty());
+    }
 }
