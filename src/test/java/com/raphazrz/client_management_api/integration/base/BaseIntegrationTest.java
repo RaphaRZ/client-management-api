@@ -112,4 +112,8 @@ public abstract class BaseIntegrationTest {
     protected ResultActions performDeleteClientById(Long id) throws Exception {
         return mockMvc.perform(delete(BASE_CLIENTS_URL + "/{id}", id));
     }
+
+    protected ResultActions performDeleteContactById(Long id) throws Exception {
+        return mockMvc.perform(delete(BASE_CONTACTS_URL + "/{id}", id));
+    }
 }
