@@ -333,6 +333,45 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(clientRequest.document(), persistedClientAfterUpdate.getDocument());
     }
 
+    @Test
+    @DisplayName("Should return status 409 Conflict when updating a client with an already registered document.")
+    void updateClientByIdDuplicateDocument() throws Exception {
+        // Arrange - Persist first client
+        ClientRequestDTO firstClientRequest = createClientRequestDTO();
+        performPostClient(firstClientRequest)
+                .andExpect(status().isCreated());
+
+        // Arrange - Persist second client
+        ClientRequestDTO secondClientRequest = createClientRequestDTO();
+        performPostClient(secondClientRequest)
+                .andExpect(status().isCreated());
+
+        Client secondPersistedClient = clientRepository.findAll().get(1);
+
+        // Arrange - Update Client data
+        UpdateClientRequestDTO request = new UpdateClientRequestDTO(
+                "Updated",
+                "Client",
+                firstClientRequest.document()
+        );
+
+        // Act & Assert - HTTP response
+        performPutClientById(secondPersistedClient.getId(), request)
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Document already registered."))
+                .andExpect(jsonPath("$.validationErrors").isEmpty())
+                .andExpect(jsonPath("$.statusCode").value(409));
+
+        // Assert - Database state
+        assertEquals(2, clientRepository.count());
+
+        Client persistedClientAfterUpdate = clientRepository.findById(secondPersistedClient.getId()).orElseThrow();
+
+        assertEquals(secondClientRequest.firstName(), persistedClientAfterUpdate.getFirstName());
+        assertEquals(secondClientRequest.lastName(), persistedClientAfterUpdate.getLastName());
+        assertEquals(secondClientRequest.document(), persistedClientAfterUpdate.getDocument());
+    }
+
     private ResultActions performPostClient(ClientRequestDTO request) throws Exception {
         return mockMvc.perform(
                 post(BASE_CLIENTS_URL)
