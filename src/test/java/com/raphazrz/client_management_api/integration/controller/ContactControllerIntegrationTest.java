@@ -232,4 +232,21 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
         // Assert - Database state
         assertTrue(contactRepository.findAll().isEmpty());
     }
+
+    @Test
+    @DisplayName("Should return status 404 Not Found when deleting a contact with a non-existent ID.")
+    void deleteContactByIdContactNotFound() throws Exception {
+        // Arrange
+        Long nonExistentId = 1L;
+
+        // Act & Assert - HTTP response
+        performDeleteContactById(nonExistentId)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Contact not found."))
+                .andExpect(jsonPath("$.validationErrors").isEmpty())
+                .andExpect(jsonPath("$.statusCode").value(404));
+
+        // Assert - Database state
+        assertTrue(contactRepository.findAll().isEmpty());
+    }
 }
