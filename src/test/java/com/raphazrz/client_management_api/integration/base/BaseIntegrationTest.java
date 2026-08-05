@@ -3,6 +3,7 @@ package com.raphazrz.client_management_api.integration.base;
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
 import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
+import com.raphazrz.client_management_api.dto.request.UpdateContactRequestDTO;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import tools.jackson.databind.ObjectMapper;
@@ -16,7 +17,9 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,10 +46,10 @@ public abstract class BaseIntegrationTest {
     }
 
     @Autowired
-    protected MockMvc mockMvc;
+    private  MockMvc mockMvc;
 
     @Autowired
-    protected ObjectMapper objectMapper;
+    private  ObjectMapper objectMapper;
 
 
     protected ClientRequestDTO createClientViaApi(ClientRequestDTO request) throws Exception {
@@ -93,6 +96,14 @@ public abstract class BaseIntegrationTest {
     protected ResultActions performPutClientById(Long id, UpdateClientRequestDTO request) throws Exception {
         return mockMvc.perform(
                 put(BASE_CLIENTS_URL + "/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+        );
+    }
+
+    protected ResultActions performPutContactById(Long id, UpdateContactRequestDTO request) throws Exception {
+        return mockMvc.perform(
+                put(BASE_CONTACTS_URL + "/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
         );
