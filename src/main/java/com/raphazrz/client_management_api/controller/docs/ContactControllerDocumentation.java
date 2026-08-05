@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 
-import static com.raphazrz.client_management_api.constants.SwaggerMessageErrors.*;
+import static com.raphazrz.client_management_api.constant.SwaggerMessageErrors.*;
 
 
 public interface ContactControllerDocumentation {

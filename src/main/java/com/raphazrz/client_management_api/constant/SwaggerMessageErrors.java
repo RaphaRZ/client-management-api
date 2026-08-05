@@ -1,4 +1,4 @@
-package com.raphazrz.client_management_api.constants;
+package com.raphazrz.client_management_api.constant;
 
 public final class SwaggerMessageErrors {
     public static final String VALIDATION_FAILED_DESCRIPTION = "Validation failed.";

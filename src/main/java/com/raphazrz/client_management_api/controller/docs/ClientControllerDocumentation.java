@@ -1,6 +1,6 @@
 package com.raphazrz.client_management_api.controller.docs;
 
-import com.raphazrz.client_management_api.constants.SwaggerMessageErrors;
+import com.raphazrz.client_management_api.constant.SwaggerMessageErrors;
 import com.raphazrz.client_management_api.dto.other.ExceptionDTO;
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
-import static com.raphazrz.client_management_api.constants.SwaggerMessageErrors.*;
+import static com.raphazrz.client_management_api.constant.SwaggerMessageErrors.*;
 
 
 public interface ClientControllerDocumentation {
