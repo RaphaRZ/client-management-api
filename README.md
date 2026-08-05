@@ -87,31 +87,19 @@ A Docker environment is provided to simplify local database setup.
 
 Docker is required to run the application using containers.
 
-Make sure Docker Desktop is installed and running.
 
-Create a `.env` file in the project root with the following variables:
-
-```env
-DB_POSTGRESQL_USERNAME=postgres
-DB_POSTGRESQL_PASSWORD=your_password
-```
+1. Make sure Docker Desktop is installed and running.
+2. Create a `.env` file in the project root with the following variables: `DB_POSTGRESQL_USERNAME=postgres` and `DB_POSTGRESQL_PASSWORD=your_password` \
 These credentials will be used by Docker Compose to create and configure the PostgreSQL container automatically.
+3. Before starting the containers, build the Spring Boot application to generate the JAR file required by Docker: `mvn clean package`. \
+This command will generate the application JAR file inside the target directory.
+4. Then, start the application using: `docker compose up --build`
 
-Then, start the application using:
-
-```bash
-docker compose up --build
-```
-
-The application will be available at:
-
-```text
-http://localhost:8080
-```
+The application will be available at: `http://localhost:8080`
 
 The Docker Compose configuration will automatically:
 
-- Build the Spring Boot application image.
+- Build the Spring Boot application image using the generated JAR file.
 - Start the PostgreSQL container.
 - Create the database environment.
 - Configure communication between the application and database containers.
@@ -119,10 +107,7 @@ The Docker Compose configuration will automatically:
 
 To stop the containers:
 
-```bash
 docker compose down
-```
-
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for more information.
