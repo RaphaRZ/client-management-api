@@ -6,6 +6,9 @@ import java.util.List;
 
 
 public record ClientResponseDTO(
+        @Schema(example = "1")
+        Long id,
+
         @Schema(example = "Albert")
         String firstName,
 
