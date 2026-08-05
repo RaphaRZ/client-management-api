@@ -391,6 +391,23 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertTrue(clientRepository.findAll().isEmpty());
     }
 
+    @Test
+    @DisplayName("Should return status 404 Not Found when deleting a client with a non-existent ID.")
+    void deleteClientByIdNotFound() throws Exception {
+        // Arrange
+        Long nonExistentId = 1L;
+
+        // Act & Assert - HTTP response
+        performDeleteClientById(nonExistentId)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Client not found."))
+                .andExpect(jsonPath("$.validationErrors").isEmpty())
+                .andExpect(jsonPath("$.statusCode").value(404));
+
+        // Assert - Database state
+        assertTrue(clientRepository.findAll().isEmpty());
+    }
+
     private ResultActions performPostClient(ClientRequestDTO request) throws Exception {
         return mockMvc.perform(
                 post(BASE_CLIENTS_URL)
