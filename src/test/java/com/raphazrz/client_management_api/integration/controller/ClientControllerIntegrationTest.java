@@ -77,14 +77,14 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 400 Bad Request when creating a client with invalid request data.")
     void createClientBadRequest() throws Exception {
         // Arrange
-        ClientRequestDTO request = new ClientRequestDTO(
+        ClientRequestDTO badRequest = new ClientRequestDTO(
                 "",
                 "Client",
                 "00123456789"
         );
 
         // Act & Assert - HTTP response
-        performPostClient(request)
+        performPostClient(badRequest)
                 .andExpect(jsonPath("$.message").value("Validation failed."))
                 .andExpect(jsonPath("$.validationErrors.firstName").exists())
                 .andExpect(jsonPath("$.statusCode").value(400));
@@ -198,23 +198,17 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         createClientViaApi(createClientRequestDTO());
         Client persistedClient = clientRepository.findAll().getFirst();
 
-        // Arrange - Persist first contact
-        ContactRequestDTO firstContactRequest = new ContactRequestDTO(
+        // Arrange - Persist first and second contacts
+        ContactRequestDTO firstContactRequest = createContactViaApi(new ContactRequestDTO(
                 ContactType.PHONE.getType(),
-                "41999999999",
-                persistedClient.getId()
+                "41000000001",
+                persistedClient.getId())
         );
-        performPostContact(firstContactRequest)
-                .andExpect(status().isCreated());
-
-        // Arrange - Persist second contact
-        ContactRequestDTO secondContactRequest = new ContactRequestDTO(
+        ContactRequestDTO secondContactRequest = createContactViaApi(new ContactRequestDTO(
                 ContactType.EMAIL.getType(),
-                "john.doe@email.com",
-                persistedClient.getId()
+                "anyemail@gmail.com",
+                persistedClient.getId())
         );
-        performPostContact(secondContactRequest)
-                .andExpect(status().isCreated());
 
         // Act & Assert - HTTP response
         performGetAllContactsByClientId(persistedClient.getId())
@@ -372,11 +366,18 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertTrue(clientRepository.findAll().isEmpty());
     }
 
-    private ClientRequestDTO createClientViaApi(ClientRequestDTO requestDTO) throws Exception {
-        performPostClient(requestDTO)
+    private ClientRequestDTO createClientViaApi(ClientRequestDTO request) throws Exception {
+        performPostClient(request)
                 .andExpect(status().isCreated());
 
-        return requestDTO;
+        return request;
+    }
+
+    private ContactRequestDTO createContactViaApi(ContactRequestDTO request) throws Exception {
+        performPostContact(request)
+                .andExpect(status().isCreated());
+
+        return request;
     }
 
     private ResultActions performPostClient(ClientRequestDTO request) throws Exception {
