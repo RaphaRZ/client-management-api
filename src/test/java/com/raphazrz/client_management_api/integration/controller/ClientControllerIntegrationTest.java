@@ -32,9 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 public class ClientControllerIntegrationTest extends BaseIntegrationTest {
-    private static final String BASE_CLIENTS_URL = "/clients";
-    private static final String BASE_CONTACTS_URL = "/contacts";
-
     @Autowired
     private ClientRepository clientRepository;
 
@@ -371,58 +368,5 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
 
         // Assert - Database state
         assertTrue(clientRepository.findAll().isEmpty());
-    }
-
-    private ClientRequestDTO createClientViaApi(ClientRequestDTO request) throws Exception {
-        performPostClient(request)
-                .andExpect(status().isCreated());
-
-        return request;
-    }
-
-    private ContactRequestDTO createContactViaApi(ContactRequestDTO request) throws Exception {
-        performPostContact(request)
-                .andExpect(status().isCreated());
-
-        return request;
-    }
-
-    private ResultActions performPostClient(ClientRequestDTO request) throws Exception {
-        return mockMvc.perform(
-                post(BASE_CLIENTS_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-        );
-    }
-
-    private ResultActions performPostContact(ContactRequestDTO request) throws Exception {
-        return mockMvc.perform(
-                post(BASE_CONTACTS_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)));
-    }
-
-    private ResultActions performGetClients() throws Exception {
-        return mockMvc.perform(get(BASE_CLIENTS_URL));
-    }
-
-    private ResultActions performGetClientById(Long id) throws Exception {
-        return mockMvc.perform(get(BASE_CLIENTS_URL + "/{id}", id));
-    }
-
-    private ResultActions performGetAllContactsByClientId(Long id) throws Exception {
-        return mockMvc.perform(get(BASE_CLIENTS_URL + "/{id}/contacts", id));
-    }
-
-    private ResultActions performPutClientById(Long id, UpdateClientRequestDTO request) throws Exception {
-        return mockMvc.perform(
-                put(BASE_CLIENTS_URL + "/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-        );
-    }
-
-    private ResultActions performDeleteClientById(Long id) throws Exception {
-        return mockMvc.perform(delete(BASE_CLIENTS_URL + "/{id}", id));
     }
 }
