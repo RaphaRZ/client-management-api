@@ -99,22 +99,13 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 409 Conflict when creating a client with an already registered document.")
     void createClientDuplicateDocumentException() throws Exception {
         // Arrange - Persist an existing client
-        ClientRequestDTO firstRequest = new ClientRequestDTO(
-                "First",
-                "Client",
-                "00123456789"
-        );
-
-        performPostClient(firstRequest)
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.document").value(firstRequest.document()));
-
+        ClientRequestDTO firstClientRequest = createClientViaApi(createClientRequestDTO());
 
         // Arrange
         ClientRequestDTO secondRequest = new ClientRequestDTO(
                 "Second",
                 "Client",
-                firstRequest.document()
+                firstClientRequest.document()
         );
 
         // Act & Assert - HTTP response
@@ -129,24 +120,18 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(1, clients.size());
 
         Client persistedClient = clients.getFirst();
-        assertEquals(firstRequest.firstName(), persistedClient.getFirstName());
-        assertEquals(firstRequest.lastName(), persistedClient.getLastName());
-        assertEquals(firstRequest.document(), persistedClient.getDocument());
+        assertEquals(firstClientRequest.firstName(), persistedClient.getFirstName());
+        assertEquals(firstClientRequest.lastName(), persistedClient.getLastName());
+        assertEquals(firstClientRequest.document(), persistedClient.getDocument());
         assertTrue(persistedClient.getContacts().isEmpty());
     }
 
     @Test
     @DisplayName("Should return status 200 OK and retrieve all persisted clients.")
     void getClientsOk() throws Exception {
-        // Arrange - Persist first client
-        ClientRequestDTO firstRequest = createClientRequestDTO();
-        performPostClient(firstRequest)
-                .andExpect(status().isCreated());
-
-        // Arrange - Persist second client
-        ClientRequestDTO secondRequest = createClientRequestDTO();
-        performPostClient(secondRequest)
-                .andExpect(status().isCreated());
+        // Arrange - Persist first and second clients
+        ClientRequestDTO firstRequest = createClientViaApi(createClientRequestDTO());
+        ClientRequestDTO secondRequest = createClientViaApi(createClientRequestDTO());
 
         // Act & Assert - HTTP response
         performGetClients()
@@ -170,10 +155,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 200 OK and retrieve a persisted client by ID.")
     void getClientByIdOk() throws Exception {
         // Arrange - Persist client
-        ClientRequestDTO persistClientRequest = createClientRequestDTO();
-        performPostClient(persistClientRequest)
-                .andExpect(status().isCreated());
-
+        ClientRequestDTO persistClientRequest = createClientViaApi(createClientRequestDTO());
         Client persistedClient = clientRepository.findAll().getFirst();
 
         // Act & Assert - HTTP response
@@ -213,10 +195,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 200 OK and retrieve all contacts from a persisted client.")
     void getAllContactsByClientIdOk() throws Exception {
         // Arrange - Persist client
-        ClientRequestDTO clientRequest = createClientRequestDTO();
-        performPostClient(clientRequest)
-                .andExpect(status().isCreated());
-
+        createClientViaApi(createClientRequestDTO());
         Client persistedClient = clientRepository.findAll().getFirst();
 
         // Arrange - Persist first contact
@@ -273,10 +252,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 200 OK and update a persisted client by ID.")
     void updateClientByIdOk() throws Exception {
         // Arrange - Persist client
-        ClientRequestDTO clientRequest = createClientRequestDTO();
-        performPostClient(clientRequest)
-                .andExpect(status().isCreated());
-
+        createClientViaApi(createClientRequestDTO());
         Client persistedClient = clientRepository.findAll().getFirst();
 
         // Arrange - Update Client data
@@ -304,10 +280,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 400 Bad Request when updating a client with invalid request data.")
     void updateClientByIdBadRequest() throws Exception {
         // Arrange - Persist client
-        ClientRequestDTO clientRequest = createClientRequestDTO();
-        performPostClient(clientRequest)
-                .andExpect(status().isCreated());
-
+        ClientRequestDTO clientRequest = createClientViaApi(createClientRequestDTO());
         Client persistedClient = clientRepository.findAll().getFirst();
 
         // Arrange - Update Client data
@@ -337,15 +310,9 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Should return status 409 Conflict when updating a client with an already registered document.")
     void updateClientByIdDuplicateDocument() throws Exception {
-        // Arrange - Persist first client
-        ClientRequestDTO firstClientRequest = createClientRequestDTO();
-        performPostClient(firstClientRequest)
-                .andExpect(status().isCreated());
-
-        // Arrange - Persist second client
-        ClientRequestDTO secondClientRequest = createClientRequestDTO();
-        performPostClient(secondClientRequest)
-                .andExpect(status().isCreated());
+        // Arrange - Persist first and second clients
+        ClientRequestDTO firstClientRequest = createClientViaApi(createClientRequestDTO());
+        ClientRequestDTO secondClientRequest = createClientViaApi(createClientRequestDTO());
 
         Client secondPersistedClient = clientRepository.findAll().get(1);
 
@@ -377,10 +344,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 204 No Content when deleting a persisted client by ID.")
     void deleteClientByIdNoContent() throws Exception {
         // Arrange - Persist client
-        ClientRequestDTO clientRequest = createClientRequestDTO();
-        performPostClient(clientRequest)
-                .andExpect(status().isCreated());
-
+        createClientViaApi(createClientRequestDTO());
         Client persistedClient = clientRepository.findAll().getFirst();
 
         // Act & Assert - HTTP response
@@ -406,6 +370,13 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
 
         // Assert - Database state
         assertTrue(clientRepository.findAll().isEmpty());
+    }
+
+    private ClientRequestDTO createClientViaApi(ClientRequestDTO requestDTO) throws Exception {
+        performPostClient(requestDTO)
+                .andExpect(status().isCreated());
+
+        return requestDTO;
     }
 
     private ResultActions performPostClient(ClientRequestDTO request) throws Exception {
