@@ -32,6 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ContactController.class)
 public class ContactControllerTest {
+    private static final String BASE_URL = "/contacts";
+
     @Autowired
     MockMvc mockMvc;
 
@@ -52,7 +54,7 @@ public class ContactControllerTest {
         when(contactService.createContact(request)).thenReturn(expectedResponse);
 
         // Act & Assert
-        mockMvc.perform(post("/contacts")
+        mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -75,7 +77,7 @@ public class ContactControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                        post("/contacts")
+                        post(BASE_URL)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -95,7 +97,7 @@ public class ContactControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                        post("/contacts")
+                        post(BASE_URL)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -117,7 +119,7 @@ public class ContactControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                        put("/contacts/{id}", id)
+                        put(BASE_URL + "/{id}", id)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -141,7 +143,7 @@ public class ContactControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                        put("/contacts/{id}", id)
+                        put(BASE_URL + "/{id}", id)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -163,7 +165,7 @@ public class ContactControllerTest {
 
         // Act & Assert
         mockMvc.perform(
-                        put("/contacts/{id}", id)
+                        put(BASE_URL + "/{id}", id)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -181,7 +183,7 @@ public class ContactControllerTest {
         doNothing().when(contactService).deleteContact(id);
 
         // Act & Assert
-        mockMvc.perform(delete("/contacts/{id}", id))
+        mockMvc.perform(delete(BASE_URL + "/{id}", id))
                 .andExpect(status().isNoContent());
 
         verify(contactService).deleteContact(id);
@@ -198,7 +200,7 @@ public class ContactControllerTest {
                 .deleteContact(id);
 
         // Act & Assert
-        mockMvc.perform(delete("/contacts/{id}", id))
+        mockMvc.perform(delete(BASE_URL + "/{id}", id))
                 .andExpect(status().isNotFound());
 
         verify(contactService).deleteContact(id);
