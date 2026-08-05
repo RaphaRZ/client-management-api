@@ -19,6 +19,7 @@ Each client can have multiple contacts, while each contact belongs to exactly on
 - JUnit 5
 - Mockito
 - MockMvc
+- Testcontainers
 
 ## API Endpoints
 
@@ -66,9 +67,11 @@ The project includes automated tests covering:
 
 - Service layer unit tests using JUnit 5 and Mockito.
 - Web layer tests using MockMvc.
+- Integration tests using Spring Boot, MockMvc, Testcontainers, and PostgreSQL.
 - Validation scenarios.
 - Exception handling scenarios.
 - HTTP status contract validation.
+- Database persistence validation.
 
 ## Documentation
 
