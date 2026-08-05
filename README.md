@@ -93,7 +93,7 @@ Docker is required to run the application using containers.
 These credentials will be used by Docker Compose to create and configure the PostgreSQL container automatically.
 3. Before starting the containers, build the Spring Boot application to generate the JAR file required by Docker: `mvn clean package`. \
 This command will generate the application JAR file inside the target directory.
-4. Then, start the application using: `docker compose up --build`
+4. Start the application using: `docker compose up --build`
 
 The application will be available at: `http://localhost:8080`
 
@@ -105,9 +105,7 @@ The Docker Compose configuration will automatically:
 - Configure communication between the application and database containers.
 - Persist PostgreSQL data using Docker volumes.
 
-To stop the containers:
-
-docker compose down
+To stop the containers: `docker compose down`
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for more information.
