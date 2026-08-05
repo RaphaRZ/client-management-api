@@ -151,4 +151,42 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(request.contact(), updatedContact.getContact());
         assertEquals(persistedClient.getId(), updatedContact.getClientId());
     }
+
+    @Test
+    @DisplayName("Should return status 400 Bad Request when updating a contact with invalid request data.")
+    void updateContactByIdBadRequest() throws Exception {
+        // Arrange - Persist client
+        createClientViaApi(createClientRequestDTO());
+        Client persistedClient = clientRepository.findAll().getFirst();
+
+        // Arrange - Persist contact
+        createContactViaApi(
+                new ContactRequestDTO(
+                        ContactType.PHONE.getType(),
+                        "41000000001",
+                        persistedClient.getId()
+                )
+        );
+        Contact persistedContact = contactRepository.findAll().getFirst();
+
+        // Arrange - Update contact data
+        UpdateContactRequestDTO request = new UpdateContactRequestDTO(
+                ContactType.PHONE.getType(),
+                ""
+        );
+
+        // Act & Assert - HTTP response
+        performPutContactById(persistedContact.getId(), request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Validation failed."))
+                .andExpect(jsonPath("$.validationErrors.contact").exists())
+                .andExpect(jsonPath("$.statusCode").value(400));
+
+        // Assert - Database state
+        Contact persistedContactAfterUpdate = contactRepository.findById(persistedContact.getId()).orElseThrow();
+
+        assertEquals(ContactType.PHONE, persistedContactAfterUpdate.getContactType());
+        assertEquals("41000000001", persistedContactAfterUpdate.getContact());
+        assertEquals(persistedClient.getId(), persistedContactAfterUpdate.getClientId());
+    }
 }
