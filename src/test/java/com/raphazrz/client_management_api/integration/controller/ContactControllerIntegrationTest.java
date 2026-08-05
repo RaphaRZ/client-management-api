@@ -1,6 +1,5 @@
 package com.raphazrz.client_management_api.integration.controller;
 
-import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
 import com.raphazrz.client_management_api.enumerator.ContactType;
 import com.raphazrz.client_management_api.integration.base.BaseIntegrationTest;
@@ -12,13 +11,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static com.raphazrz.client_management_api.enumerator.ContactType.fromType;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createClientRequestDTO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,7 +42,7 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
         createClientViaApi(createClientRequestDTO());
         Client persistedClient = clientRepository.findAll().getFirst();
 
-        // Arrange
+        // Arrange - Request
         ContactRequestDTO request = new ContactRequestDTO(
                 ContactType.PHONE.getType(),
                 "41000000001",
@@ -68,5 +67,28 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(persistedClient.getId(), persistedContact.getClientId());
     }
 
+    @Test
+    @DisplayName("Should return status 400 Bad Request when creating a contact with invalid request data.")
+    void createContactBadRequest() throws Exception {
+        // Arrange - Persist client
+        createClientViaApi(createClientRequestDTO());
+        Client persistedClient = clientRepository.findAll().getFirst();
 
+        // Arrange - Request
+        ContactRequestDTO request = new ContactRequestDTO(
+                ContactType.PHONE.getType(),
+                "",
+                persistedClient.getId()
+        );
+
+        // Act & Assert - HTTP response
+        performPostContact(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Validation failed."))
+                .andExpect(jsonPath("$.validationErrors.contact").exists())
+                .andExpect(jsonPath("$.statusCode").value(400));
+
+        // Assert - Database state
+        assertTrue(contactRepository.findAll().isEmpty());
+    }
 }
