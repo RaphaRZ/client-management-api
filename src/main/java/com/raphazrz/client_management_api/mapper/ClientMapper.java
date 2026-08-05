@@ -17,6 +17,7 @@ public class ClientMapper {
                 : toClientContactDTO(client.getContacts());;
 
         return new ClientResponseDTO(
+                client.getId(),
                 client.getFirstName(),
                 client.getLastName(),
                 client.getDocument(),

@@ -21,6 +21,7 @@ import java.util.List;
 public class ClientController implements ClientControllerDocumentation {
     private final ClientService clientService;
 
+
     @PostMapping
     public ResponseEntity<ClientResponseDTO> createClient(@Valid @RequestBody ClientRequestDTO request) {
         ClientResponseDTO newClient = clientService.createClient(request);
