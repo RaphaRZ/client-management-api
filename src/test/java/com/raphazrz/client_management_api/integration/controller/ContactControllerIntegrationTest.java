@@ -1,6 +1,7 @@
 package com.raphazrz.client_management_api.integration.controller;
 
 import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
+import com.raphazrz.client_management_api.dto.request.UpdateContactRequestDTO;
 import com.raphazrz.client_management_api.enumerator.ContactType;
 import com.raphazrz.client_management_api.integration.base.BaseIntegrationTest;
 import com.raphazrz.client_management_api.model.Client;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import static com.raphazrz.client_management_api.enumerator.ContactType.fromType;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createClientRequestDTO;
+import static com.raphazrz.client_management_api.util.TestDataFactory.createUpdateContactRequestDTO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -111,5 +113,42 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
 
         // Assert - Database state
         assertTrue(contactRepository.findAll().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Should return status 200 OK and update a persisted contact by ID.")
+    void updateContactByIdOk() throws Exception {
+        // Arrange - Persist client
+        createClientViaApi(createClientRequestDTO());
+        Client persistedClient = clientRepository.findAll().getFirst();
+
+        // Arrange - Persist contact
+        createContactViaApi(new ContactRequestDTO
+                (
+                        ContactType.PHONE.getType(),
+                        "4100000001",
+                        persistedClient.getId()
+                )
+        );
+        Contact persistedContact = contactRepository.findAll().getFirst();
+
+        // Arrange - Update contact data
+        UpdateContactRequestDTO request = createUpdateContactRequestDTO();
+
+        // Act & Assert - HTTP response
+        performPutContactById(persistedContact.getId(), request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(persistedContact.getId()))
+                .andExpect(jsonPath("$.contactType").value(fromType(request.contactType()).name()))
+                .andExpect(jsonPath("$.contact").value(request.contact()))
+                .andExpect(jsonPath("$.clientId").value(persistedClient.getId()));
+
+        // Assert - Database state
+        assertEquals(1, contactRepository.count());
+
+        Contact updatedContact = contactRepository.findById(persistedContact.getId()).orElseThrow();
+        assertEquals(fromType(request.contactType()), updatedContact.getContactType());
+        assertEquals(request.contact(), updatedContact.getContact());
+        assertEquals(persistedClient.getId(), updatedContact.getClientId());
     }
 }
