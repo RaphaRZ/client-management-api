@@ -42,6 +42,7 @@ public class ClientMapper {
     private static List<ClientContactResponseDTO> toClientContactDTO(List<Contact> contacts) {
         return contacts.stream()
                 .map(contact -> new ClientContactResponseDTO(
+                        contact.getId(),
                         contact.getContactType(),
                         contact.getContact()))
                 .toList();
