@@ -28,6 +28,7 @@ public class ContactMapper {
 
     public static ClientContactResponseDTO toClientContactResponseDTO(Contact contact) {
         return new ClientContactResponseDTO(
+                contact.getId(),
                 contact.getContactType(),
                 contact.getContact()
         );
