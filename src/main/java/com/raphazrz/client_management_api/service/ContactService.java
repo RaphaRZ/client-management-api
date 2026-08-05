@@ -5,7 +5,6 @@ import com.raphazrz.client_management_api.dto.request.UpdateContactRequestDTO;
 import com.raphazrz.client_management_api.dto.response.ClientContactResponseDTO;
 import com.raphazrz.client_management_api.dto.response.ContactResponseDTO;
 import com.raphazrz.client_management_api.enumerator.ContactType;
-import com.raphazrz.client_management_api.exception.ContactNotFoundException;
 import com.raphazrz.client_management_api.mapper.ContactMapper;
 import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.model.Contact;
