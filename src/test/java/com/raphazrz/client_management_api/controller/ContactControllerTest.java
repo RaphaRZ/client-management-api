@@ -58,6 +58,7 @@ public class ContactControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(expectedResponse.id()))
                 .andExpect(jsonPath("$.contactType").value(expectedResponse.contactType().name()))
                 .andExpect(jsonPath("$.contact").value(expectedResponse.contact()))
                 .andExpect(jsonPath("$.clientId").value(expectedResponse.clientId()));
@@ -124,6 +125,7 @@ public class ContactControllerTest {
                                 .content(objectMapper.writeValueAsString(request))
                 )
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(expectedResponse.id()))
                 .andExpect(jsonPath("$.contactType").value(expectedResponse.contactType().name()))
                 .andExpect(jsonPath("$.contact").value(expectedResponse.contact()))
                 .andExpect(jsonPath("$.clientId").value(expectedResponse.clientId()));
