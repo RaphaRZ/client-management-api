@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -372,6 +373,24 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(secondClientRequest.document(), persistedClientAfterUpdate.getDocument());
     }
 
+    @Test
+    @DisplayName("Should return status 204 No Content when deleting a persisted client by ID.")
+    void deleteClientByIdNoContent() throws Exception {
+        // Arrange - Persist client
+        ClientRequestDTO clientRequest = createClientRequestDTO();
+        performPostClient(clientRequest)
+                .andExpect(status().isCreated());
+
+        Client persistedClient = clientRepository.findAll().getFirst();
+
+        // Act & Assert - HTTP response
+        performDeleteClientById(persistedClient.getId())
+                .andExpect(status().isNoContent());
+
+        // Assert - Database state
+        assertTrue(clientRepository.findAll().isEmpty());
+    }
+
     private ResultActions performPostClient(ClientRequestDTO request) throws Exception {
         return mockMvc.perform(
                 post(BASE_CLIENTS_URL)
@@ -405,5 +424,9 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
         );
+    }
+
+    private ResultActions performDeleteClientById(Long id) throws Exception {
+        return mockMvc.perform(delete(BASE_CLIENTS_URL + "/{id}", id));
     }
 }
