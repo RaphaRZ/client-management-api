@@ -2,6 +2,7 @@ package com.raphazrz.client_management_api.integration.controller;
 
 import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
+import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
 import com.raphazrz.client_management_api.enumerator.ContactType;
 import com.raphazrz.client_management_api.integration.base.BaseIntegrationTest;
 import com.raphazrz.client_management_api.model.Client;
@@ -19,10 +20,12 @@ import java.util.List;
 
 import static com.raphazrz.client_management_api.enumerator.ContactType.fromType;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createClientRequestDTO;
+import static com.raphazrz.client_management_api.util.TestDataFactory.createUpdateClientRequestDTO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -264,6 +267,38 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(0, contactRepository.count());
     }
 
+    @Transactional
+    @Test
+    @DisplayName("Should return status 200 OK and update a persisted client by ID.")
+    void updateClientByIdOk() throws Exception {
+        // Arrange - Persist client
+        ClientRequestDTO clientRequest = createClientRequestDTO();
+        performPostClient(clientRequest)
+                .andExpect(status().isCreated());
+
+        Client persistedClient = clientRepository.findAll().getFirst();
+
+        // Arrange - Update Client data
+        UpdateClientRequestDTO request = createUpdateClientRequestDTO();
+
+        // Act & Assert - HTTP response
+        performPutClientById(persistedClient.getId(), request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value(request.firstName()))
+                .andExpect(jsonPath("$.lastName").value(request.lastName()))
+                .andExpect(jsonPath("$.document").value(request.document()))
+                .andExpect(jsonPath("$.contacts").isEmpty());
+
+        // Assert - Database state
+        assertEquals(1, clientRepository.count());
+
+        Client updatedClient = clientRepository.findById(persistedClient.getId()).orElseThrow();
+        assertEquals(request.firstName(), updatedClient.getFirstName());
+        assertEquals(request.lastName(), updatedClient.getLastName());
+        assertEquals(request.document(), updatedClient.getDocument());
+        assertTrue(updatedClient.getContacts().isEmpty());
+    }
+
     private ResultActions performPostClient(ClientRequestDTO request) throws Exception {
         return mockMvc.perform(
                 post(BASE_CLIENTS_URL)
@@ -289,5 +324,13 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
 
     private ResultActions performGetAllContactsByClientId(Long id) throws Exception {
         return mockMvc.perform(get(BASE_CLIENTS_URL + "/{id}/contacts", id));
+    }
+
+    private ResultActions performPutClientById(Long id, UpdateClientRequestDTO request) throws Exception {
+        return mockMvc.perform(
+                put(BASE_CLIENTS_URL + "/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+        );
     }
 }
