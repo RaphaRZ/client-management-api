@@ -207,4 +207,29 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
         // Assert - Database state
         assertTrue(contactRepository.findAll().isEmpty());
     }
+
+    @Test
+    @DisplayName("Should return status 204 No Content and delete a persisted contact by ID.")
+    void deleteContactByIdNoContent() throws Exception {
+        // Arrange - Persist client
+        createClientViaApi(createClientRequestDTO());
+        Client persistedClient = clientRepository.findAll().getFirst();
+
+        // Arrange - Persist contact
+        createContactViaApi(
+                new ContactRequestDTO(
+                        ContactType.PHONE.getType(),
+                        "41999999999",
+                        persistedClient.getId()
+                )
+        );
+        Contact persistedContact = contactRepository.findAll().getFirst();
+
+        // Act & Assert - HTTP response
+        performDeleteContactById(persistedContact.getId())
+                .andExpect(status().isNoContent());
+
+        // Assert - Database state
+        assertTrue(contactRepository.findAll().isEmpty());
+    }
 }
