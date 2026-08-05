@@ -299,6 +299,40 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertTrue(updatedClient.getContacts().isEmpty());
     }
 
+    @Test
+    @DisplayName("Should return status 400 Bad Request when updating a client with invalid request data.")
+    void updateClientByIdBadRequest() throws Exception {
+        // Arrange - Persist client
+        ClientRequestDTO clientRequest = createClientRequestDTO();
+        performPostClient(clientRequest)
+                .andExpect(status().isCreated());
+
+        Client persistedClient = clientRepository.findAll().getFirst();
+
+        // Arrange - Update Client data
+        UpdateClientRequestDTO request = new UpdateClientRequestDTO(
+                "",
+                "Client",
+                "00123456789"
+        );
+
+        // Act & Assert - HTTP response
+        performPutClientById(persistedClient.getId(), request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Validation failed."))
+                .andExpect(jsonPath("$.validationErrors.firstName").exists())
+                .andExpect(jsonPath("$.statusCode").value(400));
+
+        // Assert - Database state
+        assertEquals(1, clientRepository.count());
+
+        Client persistedClientAfterUpdate = clientRepository.findAll().getFirst();
+
+        assertEquals(clientRequest.firstName(), persistedClientAfterUpdate.getFirstName());
+        assertEquals(clientRequest.lastName(), persistedClientAfterUpdate.getLastName());
+        assertEquals(clientRequest.document(), persistedClientAfterUpdate.getDocument());
+    }
+
     private ResultActions performPostClient(ClientRequestDTO request) throws Exception {
         return mockMvc.perform(
                 post(BASE_CLIENTS_URL)
