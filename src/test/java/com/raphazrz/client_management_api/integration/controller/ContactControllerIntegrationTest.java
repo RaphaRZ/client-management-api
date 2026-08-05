@@ -91,4 +91,25 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
         // Assert - Database state
         assertTrue(contactRepository.findAll().isEmpty());
     }
+
+    @Test
+    @DisplayName("Should return status 404 Not Found when creating a contact for a non-existent client.")
+    void createContactClientNotFound() throws Exception {
+        // Arrange
+        ContactRequestDTO request = new ContactRequestDTO(
+                ContactType.PHONE.getType(),
+                "41999999999",
+                1L
+        );
+
+        // Act & Assert - HTTP response
+        performPostContact(request)
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Client not found."))
+                .andExpect(jsonPath("$.validationErrors").isEmpty())
+                .andExpect(jsonPath("$.statusCode").value(404));
+
+        // Assert - Database state
+        assertTrue(contactRepository.findAll().isEmpty());
+    }
 }
