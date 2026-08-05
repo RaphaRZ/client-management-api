@@ -44,6 +44,7 @@ public class TestDataFactory {
 
     public static ClientContactResponseDTO createClientContactResponseDTO() {
         return new ClientContactResponseDTO(
+                faker.number().randomNumber(),
                 faker.options().option(ContactType.values()),
                 faker.text().text()
         );
