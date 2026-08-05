@@ -67,6 +67,7 @@ class ClientControllerTest {
                                 .content(objectMapper.writeValueAsString(request))
                 )
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(expectedResponse.id()))
                 .andExpect(jsonPath("$.firstName").value(expectedResponse.firstName()))
                 .andExpect(jsonPath("$.lastName").value(expectedResponse.lastName()))
                 .andExpect(jsonPath("$.document").value(expectedResponse.document()))
@@ -129,10 +130,12 @@ class ClientControllerTest {
         mockMvc.perform(get(BASE_URL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(expectedResponse.size()))
+                .andExpect(jsonPath("$[0].id").value(expectedResponse.getFirst().id()))
                 .andExpect(jsonPath("$[0].firstName").value(expectedResponse.getFirst().firstName()))
                 .andExpect(jsonPath("$[0].lastName").value(expectedResponse.getFirst().lastName()))
                 .andExpect(jsonPath("$[0].document").value(expectedResponse.getFirst().document()))
-                .andExpect(jsonPath("$[0]..contacts.length()").value(expectedResponse.getFirst().contacts().size()))
+                .andExpect(jsonPath("$[0].contacts.length()").value(expectedResponse.getFirst().contacts().size()))
+                .andExpect(jsonPath("$[1].id").value(expectedResponse.get(1).id()))
                 .andExpect(jsonPath("$[1].firstName").value(expectedResponse.get(1).firstName()))
                 .andExpect(jsonPath("$[1].lastName").value(expectedResponse.get(1).lastName()))
                 .andExpect(jsonPath("$[1].document").value(expectedResponse.get(1).document()))
@@ -153,6 +156,7 @@ class ClientControllerTest {
         // Act & Assert
         mockMvc.perform(get(BASE_URL + "/{id}", id))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(expectedResponse.id()))
                 .andExpect(jsonPath("$.firstName").value(expectedResponse.firstName()))
                 .andExpect(jsonPath("$.lastName").value(expectedResponse.lastName()))
                 .andExpect(jsonPath("$.document").value(expectedResponse.document()));
@@ -190,8 +194,10 @@ class ClientControllerTest {
         mockMvc.perform(get(BASE_URL + "/{id}/contacts", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(expectedResponse.size()))
+                .andExpect(jsonPath("$[0].id").value(expectedResponse.getFirst().id()))
                 .andExpect(jsonPath("$[0].contactType").value(expectedResponse.getFirst().contactType().name()))
                 .andExpect(jsonPath("$[0].contact").value(expectedResponse.getFirst().contact()))
+                .andExpect(jsonPath("$[1].id").value(expectedResponse.get(1).id()))
                 .andExpect(jsonPath("$[1].contactType").value(expectedResponse.get(1).contactType().name()))
                 .andExpect(jsonPath("$[1].contact").value(expectedResponse.get(1).contact()));
 
@@ -228,6 +234,7 @@ class ClientControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(expectedResponse.id()))
                 .andExpect(jsonPath("$.firstName").value(expectedResponse.firstName()))
                 .andExpect(jsonPath("$.lastName").value(expectedResponse.lastName()))
                 .andExpect(jsonPath("$.document").value(expectedResponse.document()))
