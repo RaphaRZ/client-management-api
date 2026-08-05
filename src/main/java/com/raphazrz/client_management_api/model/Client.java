@@ -9,6 +9,7 @@ import lombok.Builder;
 
 import java.util.List;
 
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -31,6 +32,7 @@ public class Client {
             cascade = CascadeType.REMOVE,
             orphanRemoval = true
     )
+    @OrderBy("id ASC")
     private List<Contact> contacts;
 
     @Builder
