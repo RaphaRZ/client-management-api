@@ -32,12 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 public class ClientControllerIntegrationTest extends BaseIntegrationTest {
-    @Autowired
-    private ClientRepository clientRepository;
-
-    @Autowired
-    private ContactRepository contactRepository;
-
     @BeforeEach
     void setUp() {
         clientRepository.deleteAll();

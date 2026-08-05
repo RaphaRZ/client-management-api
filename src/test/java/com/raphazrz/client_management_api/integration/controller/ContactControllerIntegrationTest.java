@@ -25,12 +25,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 public class ContactControllerIntegrationTest extends BaseIntegrationTest {
-    @Autowired
-    ContactRepository contactRepository;
-
-    @Autowired
-    ClientRepository clientRepository;
-
     @BeforeEach
     void setUp() {
         clientRepository.deleteAll();
@@ -41,8 +35,7 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should create a contact and persist it into the database.")
     void createContactCreated() throws Exception {
         // Arrange - Persist client
-        createClientViaApi(createClientRequestDTO());
-        Client persistedClient = clientRepository.findAll().getFirst();
+        Client persistedClient = createClientViaApi(createClientRequestDTO());
 
         // Arrange - Request
         ContactRequestDTO request = new ContactRequestDTO(
@@ -73,8 +66,7 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 400 Bad Request when creating a contact with invalid request data.")
     void createContactBadRequest() throws Exception {
         // Arrange - Persist client
-        createClientViaApi(createClientRequestDTO());
-        Client persistedClient = clientRepository.findAll().getFirst();
+        Client persistedClient = createClientViaApi(createClientRequestDTO());
 
         // Arrange - Request
         ContactRequestDTO request = new ContactRequestDTO(
@@ -119,8 +111,7 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 200 OK and update a persisted contact by ID.")
     void updateContactByIdOk() throws Exception {
         // Arrange - Persist client
-        createClientViaApi(createClientRequestDTO());
-        Client persistedClient = clientRepository.findAll().getFirst();
+        Client persistedClient = createClientViaApi(createClientRequestDTO());
 
         // Arrange - Persist contact
         createContactViaApi(new ContactRequestDTO

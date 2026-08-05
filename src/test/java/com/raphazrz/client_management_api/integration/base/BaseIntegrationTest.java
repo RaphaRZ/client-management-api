@@ -4,6 +4,9 @@ import com.raphazrz.client_management_api.dto.request.ClientRequestDTO;
 import com.raphazrz.client_management_api.dto.request.ContactRequestDTO;
 import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
 import com.raphazrz.client_management_api.dto.request.UpdateContactRequestDTO;
+import com.raphazrz.client_management_api.model.Client;
+import com.raphazrz.client_management_api.repository.ClientRepository;
+import com.raphazrz.client_management_api.repository.ContactRepository;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import tools.jackson.databind.ObjectMapper;
@@ -51,12 +54,19 @@ public abstract class BaseIntegrationTest {
     @Autowired
     private  ObjectMapper objectMapper;
 
+    @Autowired
+    protected ClientRepository clientRepository;
 
-    protected ClientRequestDTO createClientViaApi(ClientRequestDTO request) throws Exception {
+    @Autowired
+    protected ContactRepository contactRepository;
+
+
+    protected Client createClientViaApi(ClientRequestDTO request) throws Exception {
         performPostClient(request)
                 .andExpect(status().isCreated());
 
-        return request;
+
+        return clientRepository.findAll().getFirst();;
     }
 
     protected ContactRequestDTO createContactViaApi(ContactRequestDTO request) throws Exception {
