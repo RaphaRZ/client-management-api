@@ -6,12 +6,9 @@ import com.raphazrz.client_management_api.enumerator.ContactType;
 import com.raphazrz.client_management_api.integration.base.BaseIntegrationTest;
 import com.raphazrz.client_management_api.model.Client;
 import com.raphazrz.client_management_api.model.Contact;
-import com.raphazrz.client_management_api.repository.ClientRepository;
-import com.raphazrz.client_management_api.repository.ContactRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -69,14 +66,14 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
         Client persistedClient = createClientViaApi(createClientRequestDTO());
 
         // Arrange - Request
-        ContactRequestDTO request = new ContactRequestDTO(
+        ContactRequestDTO badRequest = new ContactRequestDTO(
                 ContactType.PHONE.getType(),
                 "",
                 persistedClient.getId()
         );
 
         // Act & Assert - HTTP response
-        performPostContact(request)
+        performPostContact(badRequest)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Validation failed."))
                 .andExpect(jsonPath("$.validationErrors.contact").exists())
@@ -147,8 +144,7 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 400 Bad Request when updating a contact with invalid request data.")
     void updateContactByIdBadRequest() throws Exception {
         // Arrange - Persist client
-        createClientViaApi(createClientRequestDTO());
-        Client persistedClient = clientRepository.findAll().getFirst();
+        Client persistedClient = createClientViaApi(createClientRequestDTO());
 
         // Arrange - Persist contact
         createContactViaApi(
@@ -161,13 +157,13 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
         Contact persistedContact = contactRepository.findAll().getFirst();
 
         // Arrange - Update contact data
-        UpdateContactRequestDTO request = new UpdateContactRequestDTO(
+        UpdateContactRequestDTO badRequest = new UpdateContactRequestDTO(
                 ContactType.PHONE.getType(),
                 ""
         );
 
         // Act & Assert - HTTP response
-        performPutContactById(persistedContact.getId(), request)
+        performPutContactById(persistedContact.getId(), badRequest)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Validation failed."))
                 .andExpect(jsonPath("$.validationErrors.contact").exists())
@@ -203,8 +199,7 @@ public class ContactControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 204 No Content and delete a persisted contact by ID.")
     void deleteContactByIdNoContent() throws Exception {
         // Arrange - Persist client
-        createClientViaApi(createClientRequestDTO());
-        Client persistedClient = clientRepository.findAll().getFirst();
+        Client persistedClient = createClientViaApi(createClientRequestDTO());
 
         // Arrange - Persist contact
         createContactViaApi(

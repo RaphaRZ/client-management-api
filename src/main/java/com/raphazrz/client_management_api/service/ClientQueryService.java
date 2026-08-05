@@ -15,7 +15,8 @@ import java.util.List;
 public class ClientQueryService {
     private final ClientRepository clientRepository;
 
-    public List<Client> findAllClients() {return clientRepository.findAll(Sort.by("id"));
+    public List<Client> findAllClients() {
+        return clientRepository.findAll(Sort.by("id"));
     }
 
     public Client findClientById(Long id) {

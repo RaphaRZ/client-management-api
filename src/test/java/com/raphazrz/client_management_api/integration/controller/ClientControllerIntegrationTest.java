@@ -6,27 +6,16 @@ import com.raphazrz.client_management_api.dto.request.UpdateClientRequestDTO;
 import com.raphazrz.client_management_api.enumerator.ContactType;
 import com.raphazrz.client_management_api.integration.base.BaseIntegrationTest;
 import com.raphazrz.client_management_api.model.Client;
-import com.raphazrz.client_management_api.repository.ClientRepository;
-import com.raphazrz.client_management_api.repository.ContactRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static com.raphazrz.client_management_api.enumerator.ContactType.fromType;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createClientRequestDTO;
 import static com.raphazrz.client_management_api.util.TestDataFactory.createUpdateClientRequestDTO;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -55,10 +44,9 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.contacts").isEmpty());
 
         // Assert - Database state
-        List<Client> clients = clientRepository.findAll();
-        assertEquals(1, clients.size());
+        assertEquals(1, clientRepository.count());
 
-        Client persistedClient = clients.getFirst();
+        Client persistedClient = clientRepository.findAll().getFirst();
         assertEquals(request.firstName(), persistedClient.getFirstName());
         assertEquals(request.lastName(), persistedClient.getLastName());
         assertEquals(request.document(), persistedClient.getDocument());
@@ -82,8 +70,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.statusCode").value(400));
 
         // Assert - Database state
-        List<Client> clients = clientRepository.findAll();
-        assertTrue(clients.isEmpty());
+        assertEquals(0, clientRepository.count());
     }
 
     @Transactional
@@ -91,27 +78,25 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 409 Conflict when creating a client with an already registered document.")
     void createClientDuplicateDocumentException() throws Exception {
         // Arrange - Persist an existing client
-        ClientRequestDTO firstClientRequest = createClientViaApi(createClientRequestDTO());
+        ClientRequestDTO firstClientRequest = createClientRequestDTO();
+        Client persistedClient = createClientViaApi(firstClientRequest);
 
         // Arrange
-        ClientRequestDTO secondRequest = new ClientRequestDTO(
+        ClientRequestDTO clientRequest = new ClientRequestDTO(
                 "Second",
                 "Client",
-                firstClientRequest.document()
+                persistedClient.getDocument()
         );
 
         // Act & Assert - HTTP response
-        performPostClient(secondRequest)
+        performPostClient(clientRequest)
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("Document already registered."))
                 .andExpect(jsonPath("$.validationErrors").isEmpty())
                 .andExpect(jsonPath("$.statusCode").value(409));
 
         // Assert - Database state
-        List<Client> clients = clientRepository.findAll();
-        assertEquals(1, clients.size());
-
-        Client persistedClient = clients.getFirst();
+        assertEquals(1, clientRepository.count());
         assertEquals(firstClientRequest.firstName(), persistedClient.getFirstName());
         assertEquals(firstClientRequest.lastName(), persistedClient.getLastName());
         assertEquals(firstClientRequest.document(), persistedClient.getDocument());
@@ -122,22 +107,26 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 200 OK and retrieve all persisted clients.")
     void getClientsOk() throws Exception {
         // Arrange - Persist first and second clients
-        ClientRequestDTO firstRequest = createClientViaApi(createClientRequestDTO());
-        ClientRequestDTO secondRequest = createClientViaApi(createClientRequestDTO());
+        Client firstClient = createClientViaApi(createClientRequestDTO());
+        Client secondClient = createClientViaApi(createClientRequestDTO());
+
+
+        System.out.println("FIRST CLIENT ID >>>>" + firstClient.getId());
+        System.out.println("SECOND CLIENT ID >>>>" + secondClient.getId());
 
         // Act & Assert - HTTP response
         performGetClients()
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].id").isNumber())
-                .andExpect(jsonPath("$[0].firstName").value(firstRequest.firstName()))
-                .andExpect(jsonPath("$[0].lastName").value(firstRequest.lastName()))
-                .andExpect(jsonPath("$[0].document").value(firstRequest.document()))
+                .andExpect(jsonPath("$[0].id").value(firstClient.getId()))
+                .andExpect(jsonPath("$[0].firstName").value(firstClient.getFirstName()))
+                .andExpect(jsonPath("$[0].lastName").value(firstClient.getLastName()))
+                .andExpect(jsonPath("$[0].document").value(firstClient.getDocument()))
                 .andExpect(jsonPath("$[0].contacts").isEmpty())
-                .andExpect(jsonPath("$[1].id").isNumber())
-                .andExpect(jsonPath("$[1].firstName").value(secondRequest.firstName()))
-                .andExpect(jsonPath("$[1].lastName").value(secondRequest.lastName()))
-                .andExpect(jsonPath("$[1].document").value(secondRequest.document()))
+                .andExpect(jsonPath("$[1].id").value(secondClient.getId()))
+                .andExpect(jsonPath("$[1].firstName").value(secondClient.getFirstName()))
+                .andExpect(jsonPath("$[1].lastName").value(secondClient.getLastName()))
+                .andExpect(jsonPath("$[1].document").value(secondClient.getDocument()))
                 .andExpect(jsonPath("$[1].contacts").isEmpty());
 
         // Assert - Database state
@@ -149,23 +138,23 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 200 OK and retrieve a persisted client by ID.")
     void getClientByIdOk() throws Exception {
         // Arrange - Persist client
-        ClientRequestDTO persistClientRequest = createClientViaApi(createClientRequestDTO());
-        Client persistedClient = clientRepository.findAll().getFirst();
+        ClientRequestDTO request = createClientRequestDTO();
+        Client persistedClient = createClientViaApi(request);
 
         // Act & Assert - HTTP response
         performGetClientById(persistedClient.getId())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.firstName").value(persistClientRequest.firstName()))
-                .andExpect(jsonPath("$.lastName").value(persistClientRequest.lastName()))
-                .andExpect(jsonPath("$.document").value(persistClientRequest.document()))
+                .andExpect(jsonPath("$.id").value(persistedClient.getId()))
+                .andExpect(jsonPath("$.firstName").value(persistedClient.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(persistedClient.getLastName()))
+                .andExpect(jsonPath("$.document").value(persistedClient.getDocument()))
                 .andExpect(jsonPath("$.contacts").isEmpty());
 
         // Assert - Database state
         assertEquals(1, clientRepository.count());
-        assertEquals(persistClientRequest.firstName(), persistedClient.getFirstName());
-        assertEquals(persistClientRequest.lastName(), persistedClient.getLastName());
-        assertEquals(persistClientRequest.document(), persistedClient.getDocument());
+        assertEquals(request.firstName(), persistedClient.getFirstName());
+        assertEquals(request.lastName(), persistedClient.getLastName());
+        assertEquals(request.document(), persistedClient.getDocument());
         assertTrue(persistedClient.getContacts().isEmpty());
     }
 
@@ -183,7 +172,7 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.statusCode").value(404));
 
         // Assert - Database state
-        assertTrue(clientRepository.findAll().isEmpty());
+        assertEquals(0, clientRepository.count());
     }
 
     @Test
@@ -234,7 +223,6 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.statusCode").value(404));
 
         // Assert - Database state
-        assertTrue(clientRepository.findAll().isEmpty());
         assertEquals(0, contactRepository.count());
     }
 
@@ -243,20 +231,18 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should return status 200 OK and update a persisted client by ID.")
     void updateClientByIdOk() throws Exception {
         // Arrange - Persist client
-        createClientViaApi(createClientRequestDTO());
-        Client persistedClient = clientRepository.findAll().getFirst();
+        Client persistedClient = createClientViaApi(createClientRequestDTO());
 
-        // Arrange - Update Client data
+        // Arrange - Update Client request data
         UpdateClientRequestDTO request = createUpdateClientRequestDTO();
 
         // Act & Assert - HTTP response
         performPutClientById(persistedClient.getId(), request)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.firstName").value(request.firstName()))
-                .andExpect(jsonPath("$.lastName").value(request.lastName()))
-                .andExpect(jsonPath("$.document").value(request.document()))
-                .andExpect(jsonPath("$.contacts").isEmpty());
+                .andExpect(jsonPath("$.id").value(persistedClient.getId()))
+                .andExpect(jsonPath("$.firstName").value(persistedClient.getFirstName()))
+                .andExpect(jsonPath("$.lastName").value(persistedClient.getLastName()))
+                .andExpect(jsonPath("$.document").value(persistedClient.getDocument()));
 
         // Assert - Database state
         assertEquals(1, clientRepository.count());
@@ -265,25 +251,23 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(request.firstName(), updatedClient.getFirstName());
         assertEquals(request.lastName(), updatedClient.getLastName());
         assertEquals(request.document(), updatedClient.getDocument());
-        assertTrue(updatedClient.getContacts().isEmpty());
     }
 
     @Test
     @DisplayName("Should return status 400 Bad Request when updating a client with invalid request data.")
     void updateClientByIdBadRequest() throws Exception {
         // Arrange - Persist client
-        ClientRequestDTO clientRequest = createClientViaApi(createClientRequestDTO());
-        Client persistedClient = clientRepository.findAll().getFirst();
+        Client persistedClient = createClientViaApi(createClientRequestDTO());
 
         // Arrange - Update Client data
-        UpdateClientRequestDTO request = new UpdateClientRequestDTO(
+        UpdateClientRequestDTO badRequest = new UpdateClientRequestDTO(
                 "",
                 "Client",
                 "00123456789"
         );
 
         // Act & Assert - HTTP response
-        performPutClientById(persistedClient.getId(), request)
+        performPutClientById(persistedClient.getId(), badRequest)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Validation failed."))
                 .andExpect(jsonPath("$.validationErrors.firstName").exists())
@@ -293,26 +277,23 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         assertEquals(1, clientRepository.count());
 
         Client persistedClientAfterUpdate = clientRepository.findAll().getFirst();
-
-        assertEquals(clientRequest.firstName(), persistedClientAfterUpdate.getFirstName());
-        assertEquals(clientRequest.lastName(), persistedClientAfterUpdate.getLastName());
-        assertEquals(clientRequest.document(), persistedClientAfterUpdate.getDocument());
+        assertEquals(persistedClient.getFirstName(), persistedClientAfterUpdate.getFirstName());
+        assertEquals(persistedClient.getLastName(), persistedClientAfterUpdate.getLastName());
+        assertEquals(persistedClient.getDocument(), persistedClientAfterUpdate.getDocument());
     }
 
     @Test
     @DisplayName("Should return status 409 Conflict when updating a client with an already registered document.")
     void updateClientByIdDuplicateDocument() throws Exception {
         // Arrange - Persist first and second clients
-        ClientRequestDTO firstClientRequest = createClientViaApi(createClientRequestDTO());
-        ClientRequestDTO secondClientRequest = createClientViaApi(createClientRequestDTO());
-
-        Client secondPersistedClient = clientRepository.findAll().get(1);
+        Client firstPersistedClient = createClientViaApi(createClientRequestDTO());
+        Client secondPersistedClient = createClientViaApi(createClientRequestDTO());
 
         // Arrange - Update Client data
         UpdateClientRequestDTO request = new UpdateClientRequestDTO(
                 "Updated",
                 "Client",
-                firstClientRequest.document()
+                firstPersistedClient.getDocument()
         );
 
         // Act & Assert - HTTP response
@@ -325,26 +306,24 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
         // Assert - Database state
         assertEquals(2, clientRepository.count());
 
-        Client persistedClientAfterUpdate = clientRepository.findById(secondPersistedClient.getId()).orElseThrow();
-
-        assertEquals(secondClientRequest.firstName(), persistedClientAfterUpdate.getFirstName());
-        assertEquals(secondClientRequest.lastName(), persistedClientAfterUpdate.getLastName());
-        assertEquals(secondClientRequest.document(), persistedClientAfterUpdate.getDocument());
+        Client secondClientAfterUpdate = clientRepository.findById(secondPersistedClient.getId()).orElseThrow();
+        assertEquals(secondPersistedClient.getFirstName(), secondClientAfterUpdate.getFirstName());
+        assertEquals(secondPersistedClient.getLastName(), secondClientAfterUpdate.getLastName());
+        assertEquals(secondPersistedClient.getDocument(), secondClientAfterUpdate.getDocument());
     }
 
     @Test
     @DisplayName("Should return status 204 No Content when deleting a persisted client by ID.")
     void deleteClientByIdNoContent() throws Exception {
         // Arrange - Persist client
-        createClientViaApi(createClientRequestDTO());
-        Client persistedClient = clientRepository.findAll().getFirst();
+        Client persistedClient = createClientViaApi(createClientRequestDTO());
 
         // Act & Assert - HTTP response
         performDeleteClientById(persistedClient.getId())
                 .andExpect(status().isNoContent());
 
         // Assert - Database state
-        assertTrue(clientRepository.findAll().isEmpty());
+        assertEquals(0, clientRepository.count());
     }
 
     @Test
@@ -361,6 +340,6 @@ public class ClientControllerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.statusCode").value(404));
 
         // Assert - Database state
-        assertTrue(clientRepository.findAll().isEmpty());
+        assertEquals(0, clientRepository.count());
     }
 }

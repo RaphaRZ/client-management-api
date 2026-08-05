@@ -66,7 +66,7 @@ public abstract class BaseIntegrationTest {
                 .andExpect(status().isCreated());
 
 
-        return clientRepository.findAll().getFirst();;
+        return clientRepository.findByDocument(request.document()).orElseThrow();
     }
 
     protected ContactRequestDTO createContactViaApi(ContactRequestDTO request) throws Exception {
