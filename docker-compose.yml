@@ -1,5 +1,5 @@
 services:
-  app:
+  client-management-api:
     image: client-management-api
     build: .
     ports:
